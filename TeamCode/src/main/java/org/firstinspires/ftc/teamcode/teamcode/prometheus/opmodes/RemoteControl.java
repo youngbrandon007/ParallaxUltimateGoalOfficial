@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.teamcode.prometheus;
+package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+
+import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 
 public class RemoteControl  extends LinearOpMode {
 
@@ -9,8 +11,6 @@ public class RemoteControl  extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-
         dt = new DriveTrain(this, true);
         dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 

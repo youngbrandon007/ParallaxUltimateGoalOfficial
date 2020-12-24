@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.prometheus;
+package org.firstinspires.ftc.teamcode.teamcode.prometheus.robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 

@@ -32,4 +32,7 @@ public class Encoder {
         return new Angle(getRotationChangePercent() * 2 * Math.PI);
     }
 
+    public double distance(){
+        return getAngleChange().rad() * wheelRadius;
+    }
 }

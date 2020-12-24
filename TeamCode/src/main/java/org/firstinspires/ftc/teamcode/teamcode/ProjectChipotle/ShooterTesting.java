@@ -1,13 +1,11 @@
-package org.firstinspires.ftc.teamcode.teamcode.Testing;
+package org.firstinspires.ftc.teamcode.teamcode.ProjectChipotle;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @TeleOp
 public class ShooterTesting extends LinearOpMode {
@@ -23,22 +21,15 @@ public class ShooterTesting extends LinearOpMode {
     double shooterRPM;
     ElapsedTime shooterTimer = new ElapsedTime();
 
-    Telemetry dashboardTelemetry;
-    FtcDashboard dashboard;
-
     Servo push;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        shooter = hardwareMap.get(DcMotor.class, "r");
+        shooter = hardwareMap.get(DcMotor.class, "sm");
         push = hardwareMap.get(Servo.class, "p");
 
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
-
-        dashboard = FtcDashboard.getInstance();
-        dashboardTelemetry = dashboard.getTelemetry();
 
         waitForStart();
 
@@ -61,7 +52,7 @@ public class ShooterTesting extends LinearOpMode {
             }
 
             if(gamepad1.right_trigger > .9){
-                push.setPosition(.26);
+                push.setPosition(.30);
             }else{
                 push.setPosition(0.18);
             }
@@ -95,10 +86,6 @@ public class ShooterTesting extends LinearOpMode {
             telemetry.addData("I", pid.i);
             telemetry.addData("D", pid.d);
             telemetry.update();
-
-            dashboardTelemetry.addData("rpm", shooterRPM);
-            dashboardTelemetry.addData("Target", target);
-            dashboardTelemetry.update();
         }
     }
 

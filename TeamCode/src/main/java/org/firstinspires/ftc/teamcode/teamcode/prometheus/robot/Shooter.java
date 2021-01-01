@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Shooter {
 
-    DcMotor shooter;
+   public DcMotor shooter;
 
     private OpMode opMode;
 
     public Shooter(OpMode opMode) {
         this.opMode = opMode;
 
-        shooter = opMode.hardwareMap.get(DcMotor.class, "c");
+        shooter = opMode.hardwareMap.get(DcMotor.class, "s");
     }
 
 }

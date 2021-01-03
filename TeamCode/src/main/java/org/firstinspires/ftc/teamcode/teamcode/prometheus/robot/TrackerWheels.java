@@ -16,6 +16,9 @@ public class TrackerWheels {
     double oldX1;
     double oldX2;
     double oldY;
+    double ticksPerRotation = 8192;
+    double encWheelCirc = 2.28346 * Math.PI;
+
 
     public Pos pos;
 
@@ -55,9 +58,9 @@ public class TrackerWheels {
         double totalCir = 9*Math.PI;
         Angle turn;
 
-        x1 = (double) (encX1-oldX1)/8192 * 2.28346 * Math.PI;
-        x2 = (double) (encX2-oldX2)/8192 * 2.28346 * Math.PI;
-        y = (double) (encY-oldY)/8192 * 2.28346 * Math.PI;
+        x1 = (double) (encX1-oldX1)/ticksPerRotation * encWheelCirc;
+        x2 = (double) (encX2-oldX2)/ticksPerRotation * encWheelCirc;
+        y = (double) (encY-oldY)/ticksPerRotation * encWheelCirc;
 
         distanceX = ((x1+x2)/2);
         distanceY = y;

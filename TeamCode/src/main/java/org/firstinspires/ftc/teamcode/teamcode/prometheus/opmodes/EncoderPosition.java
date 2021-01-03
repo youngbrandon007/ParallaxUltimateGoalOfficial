@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.Angle;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.Pos;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.TrackerWheels;
 
 @TeleOp()
-
 public class EncoderPosition extends LinearOpMode {
 
     DriveTrain dt;
@@ -23,12 +22,15 @@ public class EncoderPosition extends LinearOpMode {
         tw = new TrackerWheels(this);
         waitForStart();
 
-        while(opModeIsActive()){
-            int encX1 = dt.backLeft.getCurrentPosition();
-            int encX2 = dt.frontLeft.getCurrentPosition();
-            int encY = dt.frontRight.getCurrentPosition();
-            tw.update(encX1,encX2,encY);
 
+        tw.reset(dt.backLeft.getCurrentPosition(),dt.frontLeft.getCurrentPosition(),dt.frontRight.getCurrentPosition());
+
+        while(opModeIsActive()){
+            tw.update(dt.backLeft.getCurrentPosition(),dt.frontLeft.getCurrentPosition(),dt.frontRight.getCurrentPosition(), 0.01);
+
+            if(gamepad1.left_bumper){
+                tw.pos = new Pos();
+            }
             dt.setFromAxis(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
 
             telemetry.addData("BL",dt.backLeft.getCurrentPosition() );

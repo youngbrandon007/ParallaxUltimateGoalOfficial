@@ -21,12 +21,17 @@ public class TrackerWheels {
 
 
     public Pos pos;
+    public Pos oldPos;
+
+    public Pos velocity;
+    public Pos oldVelocity;
+
 
     public TrackerWheels(OpMode opMode){
         this.opMode = opMode;
 
         pos = new Pos();
-
+        velocity = new Pos();
 //        //TODO fix wheel radius
 //        x1 = new Encoder();
 //        x1.tickPerRotation = 4096;
@@ -39,13 +44,33 @@ public class TrackerWheels {
 //        y1.wheelRadius = 1;
     }
 
-//    public void reset(int x1tick, int x2tick, int y1tick){
+    private Pos calcVelocity(double elapsedTime){
+        Pos velocity = new Pos();
+        velocity.x = (pos.x - oldPos.x)/elapsedTime;
+        velocity.y = (pos.y - oldPos.y)/elapsedTime;
+        velocity.angle = new Angle ((pos.angle.getRadians() - oldPos.angle.getRadians())/elapsedTime);
+        return velocity;
+    }
+
+    public Pos getAcceleration(double elapsedTime){
+        Pos acceleration = new Pos();
+        acceleration.x = (velocity.x - oldVelocity.x)/elapsedTime;
+        acceleration.y = (velocity.y - oldVelocity.y)/elapsedTime;
+        acceleration.angle = new Angle ((velocity.angle.getRadians() - oldVelocity.angle.getRadians())/elapsedTime);
+        return acceleration;
+    }
+
+    public void reset(int x1tick, int x2tick, int y1tick){
 //        x1.reset(x1tick);
 //        x2.reset(x2tick);
 //        y1.reset(y1tick);
-//    }
+        oldX1 = x1tick;
+        oldX2 = x2tick;
+        oldY = y1tick;
+    }
 
-    public void update(int encX1, int encX2, int encY){
+    public void update(int encX1, int encX2, int encY, double time){
+        oldPos = pos.copy();
 //        x1.update(x1tick);
 //        x2.update(x2tick);
 //        y1.update(y1tick);
@@ -71,6 +96,9 @@ public class TrackerWheels {
         pos.x += (distanceX * Math.cos(change.getRadians())) -  Math.sin(change.getRadians())*distanceY;
         pos.y += (distanceY * Math.cos(change.getRadians())) +  Math.sin(change.getRadians())*distanceX;
         pos.angle = finalAngle;
+
+        oldVelocity = velocity.copy();
+        velocity = calcVelocity(time);
 
         opMode.telemetry.addData("distanceX", distanceX);
         opMode.telemetry.addData("distanceY", distanceY);

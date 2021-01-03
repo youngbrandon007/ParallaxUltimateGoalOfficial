@@ -21,4 +21,10 @@ public class Pos {
 
         this.angle = new Angle(angle);
     }
+
+    public Pos copy(){
+
+        return new Pos(x,y,angle.copy());
+    }
+
 }

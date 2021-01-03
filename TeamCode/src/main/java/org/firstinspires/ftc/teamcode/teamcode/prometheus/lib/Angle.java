@@ -51,4 +51,9 @@ public class Angle {
     public double deg(){
         return getDegrees();
     }
+
+    public Angle copy(){
+
+        return new Angle(radians);
+    }
 }

@@ -20,7 +20,7 @@ public class Teleop extends LinearOpMode {
                 dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 shooter = new Shooter(this);
-                
+
                 waitForStart();
                 while(opModeIsActive()){
                         dt.setFromAxis(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
@@ -28,5 +28,4 @@ public class Teleop extends LinearOpMode {
                         shooter.shooter.setPower(-gamepad1.right_trigger);
                 }
         }
-
 }

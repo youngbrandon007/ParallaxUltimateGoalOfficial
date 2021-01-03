@@ -86,7 +86,6 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 
 
 @TeleOp(name="ULTIMATEGOAL Vuforia Nav Webcam", group ="Concept")
-@Disabled
 public class ConceptVuforiaUltimateGoalNavigationWebcam extends LinearOpMode {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
@@ -106,7 +105,7 @@ public class ConceptVuforiaUltimateGoalNavigationWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " --- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "Ae+3PJ3/////AAABmZ++KArd6ULIncvgnh8X3ptJvwWkLf1RfwQj4HHP4vOgeJfYtwM+Vv15UT/UoJXxLS66cmC0hWS6+2DTBkedwKF1J96AqwqhGnDPZiBiLyWaWA1G2HUAEco5vMDNzfW79UmNTWrTRNNuma4LhssPRkAc8zHDG/MTOBJgh5NSYotpY99czSMSoc+niTh/AyUVlH2xYyoNuLO0a48k+J9GlSs0N8PDrBXbPvgUKJ6Hclmf/iTsXvJWQdBg3vMXEtvCql7oXQAJbcjjdXaOvDtNmJaTD8HuqtZ+TBhlKlLDDPJkc2mNQbX6VaSznpmDxjeL81WBY4qwR9vhGTmIvwtX60go2cbd//pdt3/H2UTyRbZN";
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here

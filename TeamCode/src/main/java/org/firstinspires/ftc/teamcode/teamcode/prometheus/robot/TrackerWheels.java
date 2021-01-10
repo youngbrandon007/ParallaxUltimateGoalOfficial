@@ -44,6 +44,7 @@ public class TrackerWheels {
 //        y1.wheelRadius = 1;
     }
 
+    @Deprecated
     private Pos calcVelocity(double elapsedTime){
         Pos velocity = new Pos();
         velocity.x = (pos.x - oldPos.x)/elapsedTime;
@@ -98,7 +99,10 @@ public class TrackerWheels {
         pos.angle = finalAngle;
 
         oldVelocity = velocity.copy();
-        velocity = calcVelocity(time);
+        velocity = new Pos();
+        velocity.x = distanceX / time;
+        velocity.y = distanceY / time;
+        velocity.angle.setDegrees(turn.getDegrees() / time);
 
         opMode.telemetry.addData("distanceX", distanceX);
         opMode.telemetry.addData("distanceY", distanceY);

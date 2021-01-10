@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.PID;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,7 +10,7 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.TrackerWheels;
 
 @TeleOp()
-public class VelocityX extends LinearOpMode {
+public class AccelerationX extends LinearOpMode {
 
     DriveTrain dt;
     TrackerWheels tw;
@@ -22,6 +21,8 @@ public class VelocityX extends LinearOpMode {
     double targetspd;
     double I = -0.0018;
     double sumError;
+    double accelP = -0.01;
+    double targetAccel;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,20 +52,20 @@ public class VelocityX extends LinearOpMode {
                 }
 
                 if (gamepad1.dpad_up){
-                    P += .001;
+                    accelP += .001;
 
                 }
 
                 if (gamepad1.dpad_down){
-                    P -= .001;
+                    accelP -= .001;
                 }
 
                 if (gamepad1.dpad_right){
-                    targetspd += 2;
+                    targetAccel += 2;
                 }
 
                 if (gamepad1.dpad_left){
-                    targetspd -= 2;
+                    targetAccel -= 2;
                 }
 
                 if (gamepad1.left_bumper){
@@ -82,9 +83,11 @@ public class VelocityX extends LinearOpMode {
 
                 if (gamepad1.x) {
                     sumError += error;
-                    dt.setFromAxis(targetspd * P + sumError * I,0,0);
+                    targetspd += targetAccel * time.seconds();
+                    dt.setFromAxis(targetspd * P + sumError * I + targetAccel * accelP,0,0);
                 }else {
                     sumError = 0;
+                    targetspd = 0;
                     dt.setFromAxis(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
                 }
 
@@ -108,6 +111,8 @@ public class VelocityX extends LinearOpMode {
                 telemetry.addData("P Value", P);
                 telemetry.addData("I Value", I);
                 telemetry.addData("Right Stick Y-Value", gamepad1.right_stick_y);
+                telemetry.addData("AccelP", accelP);
+                telemetry.addData("targetAccel", targetAccel);
                 telemetry.update();
             }
         }

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Shooter {
-
+    //Prathik wrote this 
    public DcMotor shooter;
 
     private OpMode opMode;

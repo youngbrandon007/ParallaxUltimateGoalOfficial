@@ -9,7 +9,7 @@ public class Shooter {
 
     private OpMode opMode;
 
-    public double p = 0;
+    public double p = .000331;
     public double i = 0;
     public double d;
     public double sumError;
@@ -22,12 +22,17 @@ public class Shooter {
         previous = shooter.getCurrentPosition();
     }
 
-    public void update() {
+    public void update(double time) {
         double current = shooter.getCurrentPosition();
-        double error = current - previous;
+        double speed = (current - previous)/time;
+        double error = target - speed;
         sumError += error;
         double pid = (p * target) + (i * sumError);
         shooter.setPower(pid);
         opMode.telemetry.addData("PID Value", pid);
+        opMode.telemetry.addData("Speed", speed);
+        opMode.telemetry.addData("rpm", speed/28);
+
+        previous = current;
     }
 }

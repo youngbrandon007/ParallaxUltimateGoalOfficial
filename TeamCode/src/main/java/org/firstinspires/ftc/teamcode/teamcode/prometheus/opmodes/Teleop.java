@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Shooter;
@@ -13,6 +14,8 @@ public class Teleop extends LinearOpMode {
 
         DriveTrain dt;
         Shooter shooter;
+
+        ElapsedTime time = new ElapsedTime();
 
         @Override
         public void runOpMode() throws InterruptedException {
@@ -28,28 +31,34 @@ public class Teleop extends LinearOpMode {
                         shooter.shooter.setPower(-gamepad1.left_trigger);
 
                         if(gamepad1.dpad_up){
-                                shooter.p += 0.001;
+                                shooter.p += 0.000001;
                         }
 
                         if(gamepad1.dpad_down){
-                                shooter.p -= 0.001;
+                                shooter.p -= 0.000001;
                         }
 
                         if(gamepad1.dpad_right){
-                                shooter.i += 0.001;
+                                shooter.i += 0.0000001; //add zeroes
                         }
 
                         if(gamepad1.dpad_left){
-                                shooter.i -= 0.001;
+                                shooter.i -= 0.0000001;
                         }
 
                         if(gamepad1.right_bumper){
-                                shooter.target += 0.001;
+                                shooter.target += 10;
                         }
 
                         if(gamepad1.left_bumper){
-                                shooter.target -= 0.001;
+                                shooter.target -= 10;
                         }
+                        shooter.update(time.seconds());
+                        time.reset();
+                        telemetry.addData("P Value", shooter.p);
+                        telemetry.addData("i Value", shooter.i);
+                        telemetry.addData("target Value", shooter.target);
+                        telemetry.update();
                 }
         }
 }

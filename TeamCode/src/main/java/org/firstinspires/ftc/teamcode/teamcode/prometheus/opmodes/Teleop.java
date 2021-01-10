@@ -26,6 +26,30 @@ public class Teleop extends LinearOpMode {
                         dt.setFromAxis(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
                         shooter.shooter.setPower(gamepad1.right_trigger);
                         shooter.shooter.setPower(-gamepad1.left_trigger);
+
+                        if(gamepad1.dpad_up){
+                                shooter.p += 0.001;
+                        }
+
+                        if(gamepad1.dpad_down){
+                                shooter.p -= 0.001;
+                        }
+
+                        if(gamepad1.dpad_right){
+                                shooter.i += 0.001;
+                        }
+
+                        if(gamepad1.dpad_left){
+                                shooter.i -= 0.001;
+                        }
+
+                        if(gamepad1.right_bumper){
+                                shooter.target += 0.001;
+                        }
+
+                        if(gamepad1.left_bumper){
+                                shooter.target -= 0.001;
+                        }
                 }
         }
 }

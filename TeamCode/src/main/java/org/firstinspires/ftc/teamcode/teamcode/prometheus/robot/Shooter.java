@@ -2,10 +2,19 @@ package org.firstinspires.ftc.teamcode.teamcode.prometheus.robot;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoController;
+import com.qualcomm.robotcore.hardware.ServoImpl;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 public class Shooter {
     //Prathik wrote this 
    public DcMotor shooter;
+
+    private ServoImplEx leftIndexer;
+    private ServoImplEx rightIndexer;
+    private ServoImplEx pusher;
+    private ServoImplEx shooterPusher;
 
     private OpMode opMode;
 
@@ -20,6 +29,12 @@ public class Shooter {
         this.opMode = opMode;
         shooter = opMode.hardwareMap.get(DcMotor.class, "s");
         previous = shooter.getCurrentPosition();
+
+        leftIndexer = opMode.hardwareMap.get(ServoImplEx.class, "il");
+        rightIndexer = opMode.hardwareMap.get(ServoImplEx.class, "ir");
+        pusher = opMode.hardwareMap.get(ServoImplEx.class, "p");
+
+        shooterPusher = opMode.hardwareMap.get(ServoImplEx.class, "sp");
     }
 
     public void update() {
@@ -29,5 +44,41 @@ public class Shooter {
         double pid = (p * target) + (i * sumError);
         shooter.setPower(pid);
         opMode.telemetry.addData("PID Value", pid);
+    }
+
+    public void indexerUp(){
+        leftIndexer.setPosition(0.46);
+        rightIndexer.setPosition(0.51);
+    }
+
+    public void indexerDown(){
+        leftIndexer.setPosition(0.61);
+        rightIndexer.setPosition(0.36);
+    }
+
+    public void indexerOn(){
+        rightIndexer.setPwmEnable();
+        leftIndexer.setPwmEnable();
+    }
+
+    public void indexerOff(){
+        rightIndexer.setPwmDisable();
+        leftIndexer.setPwmDisable();
+    }
+
+    public void pusherOut(){
+        pusher.setPosition(0.45);
+    }
+
+    public void pusherBack(){
+        pusher.setPosition(0.70);
+    }
+
+    public void shooterPusherOut(){
+        shooterPusher.setPosition(0.55);
+    }
+
+    public void shooterPusherBack(){
+        shooterPusher.setPosition(0.30);
     }
 }

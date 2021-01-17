@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Collector {
 
-    DcMotor collector;
+    public DcMotor collector;
 
     private OpMode opMode;
 

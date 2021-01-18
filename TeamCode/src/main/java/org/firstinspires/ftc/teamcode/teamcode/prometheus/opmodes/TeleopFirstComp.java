@@ -18,6 +18,7 @@ public class TeleopFirstComp extends LinearOpMode {
         Shooter shooter;
         Collector collector;
 
+        double collectorSpeed;
         double speed = 0.7;
         boolean on = false;
         boolean click = false;
@@ -30,6 +31,8 @@ public class TeleopFirstComp extends LinearOpMode {
                 shooter = new Shooter(this);
 
                 collector = new Collector(this);
+
+
 
                 waitForStart();
                 while(opModeIsActive()){
@@ -72,6 +75,8 @@ public class TeleopFirstComp extends LinearOpMode {
                         if(gamepad2.left_bumper){
                                 shooter.indexerOn();
                                 shooter.indexerDown();
+                                on = false;
+                                collectorSpeed = 1;
                         }
 
                         if(gamepad2.b){
@@ -80,6 +85,8 @@ public class TeleopFirstComp extends LinearOpMode {
 
                         if(gamepad2.y){
                                 shooter.pusherOut();
+                                on = true;
+                                collectorSpeed = 0;
                         }else{
                                 shooter.pusherBack();
                         }
@@ -90,7 +97,12 @@ public class TeleopFirstComp extends LinearOpMode {
                                 shooter.shooterPusherBack();
                         }
 
-                        collector.collector.setPower(gamepad1.right_trigger-gamepad1.left_trigger+gamepad2.right_trigger-gamepad2.left_trigger);
+                        if (gamepad1.right_trigger-gamepad1.left_trigger+gamepad2.right_trigger-gamepad2.left_trigger == 0){
+                                collector.collector.setPower(collectorSpeed);
+                        }else{
+                                collector.collector.setPower(gamepad1.right_trigger-gamepad1.left_trigger+gamepad2.right_trigger-gamepad2.left_trigger);
+                                collectorSpeed = 0;
+                        }
 
                         telemetry.addData("Shooter speed", speed);
                         telemetry.update();

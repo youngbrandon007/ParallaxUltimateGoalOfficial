@@ -29,6 +29,8 @@ public class Teleop extends LinearOpMode {
                         dt.setFromAxis(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
                         shooter.shooter.setPower(gamepad1.right_trigger);
                         shooter.shooter.setPower(-gamepad1.left_trigger);
+<<<<<<< HEAD
+=======
 
                         if(gamepad1.dpad_up){
                                 shooter.p += 0.000001;
@@ -53,12 +55,16 @@ public class Teleop extends LinearOpMode {
                         if(gamepad1.left_bumper){
                                 shooter.target -= 10;
                         }
+<<<<<<< HEAD
                         shooter.update(time.seconds());
                         time.reset();
                         telemetry.addData("P Value", shooter.p);
                         telemetry.addData("i Value", shooter.i);
                         telemetry.addData("target Value", shooter.target);
                         telemetry.update();
+=======
+>>>>>>> 57dabee1679cb06105690ae28cee5f5f25b62cb6
+>>>>>>> f3c56d7a3322800cfd7e9738fd0bb5d42a0e9744
                 }
         }
 }

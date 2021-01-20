@@ -18,15 +18,15 @@ public class VelocityX extends LinearOpMode {
 
     ElapsedTime time = new ElapsedTime();
 
-    double P = -0.016;
+    double P = -0.013;
     double targetspd;
-    double I = -0.0018;
+    double I = -0.0011;
     double sumError;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //FtcDashboard dashboard = FtcDashboard.getInstance();
-        //telemetry = dashboard.getTelemetry();
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        telemetry = dashboard.getTelemetry();
 
         dt = new DriveTrain(this, true);
         dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -43,7 +43,7 @@ public class VelocityX extends LinearOpMode {
 
         while(opModeIsActive()){
 
-            if(time.milliseconds()>1000/50) {
+            if(time.milliseconds()>50) {
                 tw.update(dt.backLeft.getCurrentPosition(), dt.frontLeft.getCurrentPosition(), dt.frontRight.getCurrentPosition(), time.seconds());
 
                 if (gamepad1.left_bumper) {

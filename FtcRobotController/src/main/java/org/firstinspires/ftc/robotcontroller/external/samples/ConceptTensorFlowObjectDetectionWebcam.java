@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.robotcontroller.external.samples;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -50,7 +51,6 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
  * is explained below.
  */
 @TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
-@Disabled
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "UltimateGoal.tflite";
     private static final String LABEL_FIRST_ELEMENT = "Quad";
@@ -69,7 +69,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
+            "Ae+3PJ3/////AAABmZ++KArd6ULIncvgnh8X3ptJvwWkLf1RfwQj4HHP4vOgeJfYtwM+Vv15UT/UoJXxLS66cmC0hWS6+2DTBkedwKF1J96AqwqhGnDPZiBiLyWaWA1G2HUAEco5vMDNzfW79UmNTWrTRNNuma4LhssPRkAc8zHDG/MTOBJgh5NSYotpY99czSMSoc+niTh/AyUVlH2xYyoNuLO0a48k+J9GlSs0N8PDrBXbPvgUKJ6Hclmf/iTsXvJWQdBg3vMXEtvCql7oXQAJbcjjdXaOvDtNmJaTD8HuqtZ+TBhlKlLDDPJkc2mNQbX6VaSznpmDxjeL81WBY4qwR9vhGTmIvwtX60go2cbd//pdt3/H2UTyRbZN";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -90,6 +90,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         initVuforia();
         initTfod();
 
+
+
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
@@ -107,6 +109,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
             // Uncomment the following line if you want to adjust the magnification and/or the aspect ratio of the input images.
             //tfod.setZoom(2.5, 1.78);
         }
+
+        FtcDashboard.getInstance().startCameraStream(tfod, 0);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");

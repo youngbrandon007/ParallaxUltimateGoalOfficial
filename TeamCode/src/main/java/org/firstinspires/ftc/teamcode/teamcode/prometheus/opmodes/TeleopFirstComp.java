@@ -27,11 +27,16 @@ public class TeleopFirstComp extends LinearOpMode {
         double collectorSpeed;
         boolean on = false;
         boolean click = false;
+        boolean pusherOut = false;
+        boolean pusherAuto = false;
+        int shoot = 0;
 
         ElapsedTime time = new ElapsedTime();
         ElapsedTime shoot3 = new ElapsedTime();
+        ElapsedTime pusherTimer = new ElapsedTime();
 
         Rev2mDistanceSensor distanceSensor;
+
 
         @Override
         public void runOpMode() throws InterruptedException {
@@ -50,6 +55,8 @@ public class TeleopFirstComp extends LinearOpMode {
 
                 time.reset();
 
+                shooter.pusherBack();
+
                 while(opModeIsActive()){
                         if(time.milliseconds() > 50) {
                                 dt.setFromAxis(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
@@ -57,12 +64,12 @@ public class TeleopFirstComp extends LinearOpMode {
 
                                 if (gamepad2.dpad_up && !click) {
                                         click = true;
-                                        shooter.target += 50;
+                                        shooter.target += 25;
                                 }
 
                                 if (gamepad2.dpad_down && !click) {
                                         click = true;
-                                        shooter.target -= 50;
+                                        shooter.target -= 25;
                                 }
 
                                 if (!gamepad2.dpad_up && !gamepad2.dpad_down) {
@@ -76,36 +83,50 @@ public class TeleopFirstComp extends LinearOpMode {
                                         on = false;
                                 }
 
+                                if (gamepad2.right_bumper) {
+                                        if(pusherOut){
+                                                pusherTimer.reset();
+                                                pusherAuto = true;
+                                                shooter.pusherBack();
+                                        }else {
+                                                shooter.indexerOn();
+                                                shooter.indexerUp();
+                                        }
 
-                                if (on) {
-                                        shooter.update(time.seconds());
-                                } else {
-                                        shooter.shooter.setPower(0);
                                 }
 
-                                if (gamepad2.right_bumper) {
+                                if(pusherAuto && pusherTimer.seconds() > .3){
                                         shooter.indexerOn();
                                         shooter.indexerUp();
+                                        pusherOut = false;
+                                }
+
+                                if(pusherAuto && pusherTimer.seconds() > .6){
+                                        pusherAuto = false;
+                                        shoot = 3;
+                                        shoot3.reset();
                                 }
 
                                 if (gamepad2.left_bumper) {
                                         shooter.indexerOn();
                                         shooter.indexerDown();
+                                        shooter.pusherBack();
+                                        pusherOut = false;
                                         on = false;
                                         collectorSpeed = 1;
                                 }
 
-                                if (gamepad2.b) {
+                                if (gamepad2.a) {
                                         shooter.indexerOff();
                                 }
 
                                 if (gamepad2.y) {
                                         shooter.pusherOut();
+                                        pusherOut = true;
                                         on = true;
                                         collectorSpeed = 0;
-                                } else {
-                                        shooter.pusherBack();
                                 }
+
 
                                 if (gamepad2.dpad_right || gamepad1.dpad_right) {
                                         shooter.shooterPusherOut();
@@ -114,15 +135,21 @@ public class TeleopFirstComp extends LinearOpMode {
                                 }
 
                                 if(gamepad2.dpad_left){
+                                        if(shoot != 1){
+                                                shoot = 1;
+                                                shoot3.reset();
+                                        }
+                                }
+
+                                if(shoot > 0){
                                         if(shoot3.seconds() < .3){
                                                 shooter.shooterPusherOut();
                                         }else if(shoot3.seconds() > 0.6){
                                                 shoot3.reset();
+                                                shoot -= 1;
                                         }else{
                                                 shooter.shooterPusherBack();
                                         }
-                                }else{
-                                        shoot3.reset();
                                 }
 
                                 if(!shooter.indexerUp) {
@@ -142,6 +169,12 @@ public class TeleopFirstComp extends LinearOpMode {
                                         wobbleArm.wobbleServo.setPosition(0);
                                 }else {
                                         wobbleArm.wobbleServo.setPosition(0.5);
+                                }
+
+                                if (on) {
+                                        shooter.update(time.seconds());
+                                } else {
+                                        shooter.shooter.setPower(0);
                                 }
 
                                 time.reset();

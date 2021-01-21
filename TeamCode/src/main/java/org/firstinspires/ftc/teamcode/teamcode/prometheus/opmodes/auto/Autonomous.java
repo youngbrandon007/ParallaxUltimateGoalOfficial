@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.auto;
 
+import android.os.Environment;
+
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -42,6 +44,9 @@ public class Autonomous extends LinearOpMode {
     enum State{
         DriveForward, Scan, MoveToShoot, Shoot,
         aDrive, aBack,
+        bDrive, bBack,
+        cDrive, cBack,
+        End
     }
 
     State state;
@@ -99,6 +104,37 @@ public class Autonomous extends LinearOpMode {
         while(opModeIsActive()){
             if(time.milliseconds() > 50){
                 tw.update(dt.backLeft.getCurrentPosition(), dt.frontLeft.getCurrentPosition(), dt.frontRight.getCurrentPosition(), time.seconds());
+
+                if (tfod != null) {
+                    // getUpdatedRecognitions() will return null if no new information is available since
+                    // the last time that call was made.
+                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+                    if (updatedRecognitions != null) {
+                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+                        // step through the list of recognitions and display boundary info.
+                        int i = 0;
+                        String tempStack = null;
+                        for (Recognition recognition : updatedRecognitions) {
+                            telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                            telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                                    recognition.getLeft(), recognition.getTop());
+                            telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                                    recognition.getRight(), recognition.getBottom());
+                            tempStack = recognition.getLabel();
+                        }
+
+                        if(state == State.Scan && stateTime.seconds() > 1) {
+                            if (tempStack == null) {
+                                stackNullCount++;
+                            } else if (tempStack.equals("Quad")) {
+                                stackQuadCount++;
+                            } else {
+                                stackSingleCount++;
+                            }
+                        }
+                    }
+                }
+
                 switch (state){
                     case DriveForward:
                         targetSpeed = (22 - tw.pos.x) * 3;  //22
@@ -112,44 +148,15 @@ public class Autonomous extends LinearOpMode {
 
                         break;
                     case Scan:
-
-                        if (tfod != null) {
-                            // getUpdatedRecognitions() will return null if no new information is available since
-                            // the last time that call was made.
-                            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                            if (updatedRecognitions != null) {
-                                telemetry.addData("# Object Detected", updatedRecognitions.size());
-                                // step through the list of recognitions and display boundary info.
-                                int i = 0;
-                                stack = null;
-                                for (Recognition recognition : updatedRecognitions) {
-                                    telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
-                                    telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
-                                            recognition.getLeft(), recognition.getTop());
-                                    telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
-                                            recognition.getRight(), recognition.getBottom());
-                                    stack = recognition.getLabel();
-                                }
-
-                                if(stack == null){
-                                    stackNullCount++;
-                                }else if(stack.equals("quad")){
-                                    stackQuadCount++;
-                                }else{
-                                    stackSingleCount++;
-                                }
-                            }
-
-                        }
                         shooterOn = true;
 
-                        if(stateTime.seconds() > 1){
+                        if(stateTime.seconds() > 2){
                             if(stackNullCount > stackQuadCount && stackNullCount > stackSingleCount){
                                 stack = null;
                             }else if(stackQuadCount > stackNullCount && stackQuadCount > stackSingleCount){
-                                stack = "quad";
+                                stack = "Quad";
                             }else{
-                                stack = "single";
+                                stack = "Single";
                             }
                             state = State.MoveToShoot;
                         }
@@ -172,6 +179,10 @@ public class Autonomous extends LinearOpMode {
                             shooter.shooterPusherBack();
                             if(stack == null){
                                 state = State.aDrive;
+                            }else if(stack.equals("Quad")){
+                                state = State.cDrive;
+                            }else{
+                                state = State.bDrive;
                             }
                         }if(stateTime.seconds() > 1.6){
                             shooter.shooterPusherOut();
@@ -204,7 +215,53 @@ public class Autonomous extends LinearOpMode {
                         if(Math.abs(0 - tw.pos.y) < 2) {
                             dt.stop();
                             stateTime.reset();
+                            state = State.End;
                         }
+                        break;
+                    case bDrive:
+                        targetSpeed = (85 - tw.pos.x) * 3;
+                        targetSpeed = clip(targetSpeed, 30);
+                        dt.xPID(tw.velocity, targetSpeed, tw.pos.angle.getDegrees(), 0);
+                        if(Math.abs(85 - tw.pos.x) < 2) {
+                            dt.stop();
+                            stateTime.reset();
+                            state = State.bBack;
+                            shooterOn = false;
+                        }
+
+                        break;
+                    case bBack:
+                        targetSpeed = (70 - tw.pos.x) * 3;
+                        targetSpeed = clip(targetSpeed, 30);
+                        dt.xPID(tw.velocity, targetSpeed, tw.pos.angle.getDegrees(), 0);
+                        if(Math.abs(70 - tw.pos.x) < 2) {
+                            dt.stop();
+                            stateTime.reset();
+                            state = State.End;
+                        }
+                        break;
+                    case cDrive:
+                        targetSpeed = (115 - tw.pos.x) * 3;
+                        targetSpeed = clip(targetSpeed, 20);
+                        dt.xPIDwRotation(tw.velocity, targetSpeed, -0.13);
+                        if(Math.abs(115 - tw.pos.x) < 2) {
+                            dt.stop();
+                            stateTime.reset();
+                            state = State.cBack;
+                            shooterOn = false;
+                        }
+
+                        break;
+                    case cBack:
+                        targetSpeed = (70 - tw.pos.x) * 3;
+                        targetSpeed = clip(targetSpeed, 20);
+                        dt.xPIDwRotation(tw.velocity, targetSpeed, -0.13);
+                        if(Math.abs(70 - tw.pos.x) < 2) {
+                            dt.stop();
+                            stateTime.reset();
+                            state = State.End;
+                        }
+
                         break;
                 }
                 if(shooterOn) {
@@ -213,6 +270,8 @@ public class Autonomous extends LinearOpMode {
                 else {
                     shooter.shooter.setPower(0);
                 }
+
+
 
                 time.reset();
 

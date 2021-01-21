@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.PID;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.configuration.annotations.DigitalIoDeviceType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.Pos;
@@ -11,6 +13,7 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.TrackerWheels;
 
 @TeleOp()
+@Disabled
 public class PositionX extends LinearOpMode {
 
     DriveTrain dt;

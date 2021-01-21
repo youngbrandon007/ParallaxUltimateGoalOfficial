@@ -19,8 +19,8 @@ public class Shooter {
     private OpMode opMode;
 
     public double p = .000380;
-    public double i = 1.5E-8;
-    public double d = .00100;
+    public double i = 20.0E-8;
+    public double d = .00200;
     public double sumError;
     public double previous;
     public double target = 1650;

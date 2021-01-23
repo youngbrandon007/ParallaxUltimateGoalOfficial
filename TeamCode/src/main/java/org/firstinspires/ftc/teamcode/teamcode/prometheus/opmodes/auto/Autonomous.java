@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.auto;
 
 import android.os.Environment;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -40,9 +42,10 @@ public class Autonomous extends LinearOpMode {
 
     ElapsedTime time = new ElapsedTime();
     ElapsedTime stateTime = new ElapsedTime();
+    ElapsedTime shooterTimer = new ElapsedTime();
 
     enum State{
-        DriveForward, Scan, MoveToShoot, Shoot,
+        DriveForward, Scan, MoveToShoot, WaitToShoot, Shoot,
         aDrive, aBack,
         bDrive, bBack,
         cDrive, cBack,
@@ -72,6 +75,9 @@ public class Autonomous extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = FtcDashboard.getInstance().getTelemetry();
+        telemetry.setAutoClear(false);
+
         dt = new DriveTrain(this, true);
         dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         tw = new TrackerWheels(this);
@@ -95,13 +101,24 @@ public class Autonomous extends LinearOpMode {
         shooter.indexerUp();
         shooter.shooterPusherBack();
         time.reset();
+        shooterTimer.reset();
 
         state = State.DriveForward;
 
-        shooter.target = 1600;
+        shooter.target = 1650;
 
         tw.reset(dt.backLeft.getCurrentPosition(),dt.frontLeft.getCurrentPosition(),dt.frontRight.getCurrentPosition());
         while(opModeIsActive()){
+            if(shooterTimer.milliseconds() > 50){
+                if(shooterOn) {
+                    shooter.update(shooterTimer.seconds());
+                }
+                else {
+                    shooter.shooter.setPower(0);
+                }
+                shooterTimer.reset();
+            }
+
             if(time.milliseconds() > 50){
                 tw.update(dt.backLeft.getCurrentPosition(), dt.frontLeft.getCurrentPosition(), dt.frontRight.getCurrentPosition(), time.seconds());
 
@@ -162,20 +179,27 @@ public class Autonomous extends LinearOpMode {
                         }
                         break;
 
+
                     case MoveToShoot:
                         targetSpeed = (58 - tw.pos.x) * 3;
                         targetSpeed = clip(targetSpeed, 30);
-                        dt.xPID(tw.velocity, targetSpeed, tw.pos.angle.getDegrees(), 0);
+                        dt.xPID(tw.velocity, targetSpeed, tw.pos.angle.getDegrees(), -4);
                         if(Math.abs(58 - tw.pos.x) < 2) {
                             dt.stop();
                             stateTime.reset();
-                            state = State.Shoot;
+                            state = State.WaitToShoot;
                         }
 
                         break;
+                    case WaitToShoot:
+                        if(stateTime.seconds() > 1){
+                            stateTime.reset();
+                            state = State.Shoot;
+                        }
+                        break;
                     case Shoot:
 
-                        if(stateTime.seconds() > 2.0) {
+                        if(stateTime.seconds() > 5) {
                             shooter.shooterPusherBack();
                             if(stack == null){
                                 state = State.aDrive;
@@ -184,13 +208,13 @@ public class Autonomous extends LinearOpMode {
                             }else{
                                 state = State.bDrive;
                             }
-                        }if(stateTime.seconds() > 1.6){
+                        }if(stateTime.seconds() > 4){
                             shooter.shooterPusherOut();
-                        }else if(stateTime.seconds() > 1.2){
+                        }else if(stateTime.seconds() > 3){
                             shooter.shooterPusherBack();
-                        }else if(stateTime.seconds() > 0.8){
+                        }else if(stateTime.seconds() > 2){
                             shooter.shooterPusherOut();
-                        }else if(stateTime.seconds() > 0.4){
+                        }else if(stateTime.seconds() > 1){
                             shooter.shooterPusherBack();
                         }else{
                             shooter.shooterPusherOut();
@@ -264,12 +288,7 @@ public class Autonomous extends LinearOpMode {
 
                         break;
                 }
-                if(shooterOn) {
-                    shooter.update(time.seconds());
-                }
-                else {
-                    shooter.shooter.setPower(0);
-                }
+
 
 
 
@@ -283,6 +302,7 @@ public class Autonomous extends LinearOpMode {
                 telemetry.addData("target Value", shooter.target);
                 telemetry.update();
             }
+
         }
     }
 

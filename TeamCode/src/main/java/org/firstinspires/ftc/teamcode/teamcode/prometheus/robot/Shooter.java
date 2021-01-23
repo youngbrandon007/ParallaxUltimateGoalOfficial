@@ -18,12 +18,14 @@ public class Shooter {
 
     private OpMode opMode;
 
-    public double p = .000380;
-    public double i = 20.0E-8;
-    public double d = .00200;
+    public double f = .000380;
+    public double p = .00050;
+    public double i = 2.25E-8;
+    public double d = .0000;
     public double sumError;
     public double previous;
-    public double target = 1650;
+    public double prevError = 0;
+    public double target = 1600;
 
     public Shooter(OpMode opMode) {
         this.opMode = opMode;
@@ -41,14 +43,16 @@ public class Shooter {
         double current = -shooter.getCurrentPosition();
         double speed = (current - previous)/time;
         double error = target - speed;
+        double derv = (error - prevError) / time;
         sumError += error;
-        double pid = (p * target) + (i * sumError * target) + (d * error);
+        double pid = (f * target) + (p * error)  + (i * sumError * target) + (d * derv);
         shooter.setPower(-pid);
         opMode.telemetry.addData("PID Value", pid);
         opMode.telemetry.addData("Ticks", speed);
         opMode.telemetry.addData("rpm", speed/28 * 60);
 
         previous = current;
+        prevError = error;
     }
 
     public void indexerUp(){

@@ -56,4 +56,8 @@ public class Angle {
 
         return new Angle(radians);
     }
+
+    public Angle negative(){
+        return new Angle(-radians);
+    }
 }

@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.PID;
+package org.firstinspires.ftc.teamcode.teamcode.prometheus.OLD.PID;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.TrackerWheels;
 
 @TeleOp()
+@Disabled
 public class VelocityX extends LinearOpMode {
 
     DriveTrain dt;
@@ -28,7 +30,7 @@ public class VelocityX extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
 
-        dt = new DriveTrain(this, true);
+        dt = new DriveTrain(this);
         dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         tw = new TrackerWheels(this);
         waitForStart();

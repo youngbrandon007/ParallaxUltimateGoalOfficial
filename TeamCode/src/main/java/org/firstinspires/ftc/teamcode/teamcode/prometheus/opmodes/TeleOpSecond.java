@@ -1,29 +1,26 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Camera;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Collector;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Shooter;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.WobbleArm;
 
-import java.util.Collection;
 
-
-@TeleOp(name = "Teleop")
-public class TeleopFirstComp extends LinearOpMode {
+@TeleOp(name = "Teleop2")
+public class TeleOpSecond extends LinearOpMode {
 
         DriveTrain dt;
         Shooter shooter;
         Collector collector;
         WobbleArm wobbleArm;
+        Camera camera;
 
         double collectorSpeed;
         boolean on = false;
@@ -36,13 +33,11 @@ public class TeleopFirstComp extends LinearOpMode {
         ElapsedTime shoot3 = new ElapsedTime();
         ElapsedTime pusherTimer = new ElapsedTime();
 
-        Rev2mDistanceSensor distanceSensor;
-
 
         @Override
         public void runOpMode() throws InterruptedException {
-                telemetry = FtcDashboard.getInstance().getTelemetry();
-                dt = new DriveTrain(this, true);
+                //telemetry = FtcDashboard.getInstance().getTelemetry();
+                dt = new DriveTrain(this);
                 dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
                 shooter = new Shooter(this);
@@ -51,7 +46,9 @@ public class TeleopFirstComp extends LinearOpMode {
 
                 wobbleArm = new WobbleArm(this, true);
 
-                distanceSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distance");
+                camera = new Camera(this);
+
+                double currentPos = wobbleArm.wobbleArm.getPower();
 
                 waitForStart();
 
@@ -129,13 +126,6 @@ public class TeleopFirstComp extends LinearOpMode {
                                         collectorSpeed = 0;
                                 }
 
-
-                                if (gamepad2.dpad_right || gamepad1.dpad_right) {
-                                        shooter.shooterPusherOut();
-                                } else {
-                                        shooter.shooterPusherBack();
-                                }
-
                                 if(gamepad2.dpad_left){
                                         if(shoot != 1){
                                                 shoot = 1;
@@ -144,9 +134,9 @@ public class TeleopFirstComp extends LinearOpMode {
                                 }
 
                                 if(shoot > 0){
-                                        if(shoot3.seconds() < .3){
+                                        if(shoot3.seconds() < .075){
                                                 shooter.shooterPusherOut();
-                                        }else if(shoot3.seconds() > 0.6){
+                                        }else if(shoot3.seconds() > 0.15){
                                                 shoot3.reset();
                                                 shoot -= 1;
                                         }else{
@@ -165,24 +155,51 @@ public class TeleopFirstComp extends LinearOpMode {
                                         collector.collector.setPower(0);
                                 }
 
-                                if (gamepad1.dpad_down) {
-                                        wobbleArm.wobbleServo.setPosition(1);
-                                } else if (gamepad1.dpad_up) {
-                                        wobbleArm.wobbleServo.setPosition(0);
-                                }else {
-                                        wobbleArm.wobbleServo.setPosition(0.5);
+                                if (gamepad1.dpad_up) {
+                                        wobbleArm.wobbleArm.setPower(-0.4);
+                                }
+                                else if (gamepad1.dpad_down) {
+                                        wobbleArm.wobbleArm.setPower(0.4);
+                                }
+                                else {
+                                        wobbleArm.wobbleArm.setPower(currentPos);
+                                }
+
+                                if (gamepad1.dpad_right) {
+                                        wobbleArm.servoClose();
+                                }
+
+                                if (gamepad1.dpad_left) {
+                                        wobbleArm.servoOpen();
                                 }
 
                                 if (on) {
-                                        shooter.update(time.seconds());
+                                        //shooter.update(time.seconds());
+                                        shooter.shooter.setPower(-1.0);
                                 } else {
                                         shooter.shooter.setPower(0);
                                 }
 
+                                if(gamepad2.left_stick_y > 0.5){
+                                        shooter.shooterLiftDown();
+                                }
+                                if(gamepad2.left_stick_y < -0.5){
+                                        shooter.shooterLiftUp();
+                                }
+
+                                if(gamepad2.right_stick_y > .5){
+                                        camera.servoDown();
+                                }else if(gamepad2.right_stick_y < -.5){
+                                        camera.servoUp();
+                                }else{
+                                        camera.servoBack();
+                                }
+
+                                telemetry.addData("Stick", gamepad2.right_stick_y);
+
                                 time.reset();
 
                                 telemetry.addData("target Value", shooter.target);
-                                telemetry.addData("distance", distanceSensor.getDistance(DistanceUnit.INCH));
                                 telemetry.update();
                         }
                 }

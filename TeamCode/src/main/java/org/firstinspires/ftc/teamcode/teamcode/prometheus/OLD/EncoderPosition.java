@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
+package org.firstinspires.ftc.teamcode.teamcode.prometheus.OLD;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.TrackerWheels;
 
 @TeleOp()
+@Disabled
 public class EncoderPosition extends LinearOpMode {
 
     DriveTrain dt;
@@ -17,7 +18,7 @@ public class EncoderPosition extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        dt = new DriveTrain(this, true);
+        dt = new DriveTrain(this);
         dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         tw = new TrackerWheels(this);
         waitForStart();

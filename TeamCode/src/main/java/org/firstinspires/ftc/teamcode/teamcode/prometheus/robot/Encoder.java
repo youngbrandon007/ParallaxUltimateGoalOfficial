@@ -8,7 +8,7 @@ public class Encoder {
     private int prev;
 
     public double tickPerRotation;
-    public double wheelRadius;
+    public double wheelDiameter;
 
     public void reset(int newValue){
         curr = newValue;
@@ -33,6 +33,6 @@ public class Encoder {
     }
 
     public double distance(){
-        return getAngleChange().rad() * wheelRadius;
+        return getAngleChange().rad() * wheelDiameter / 2;
     }
 }

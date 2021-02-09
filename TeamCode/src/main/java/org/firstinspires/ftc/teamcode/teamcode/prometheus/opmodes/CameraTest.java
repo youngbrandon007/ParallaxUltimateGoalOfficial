@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,11 +20,28 @@ public class CameraTest extends LinearOpMode {
         waitForStart();
 
         camera.startVuforia();
+        camera.startTensorFlow();
+
 
         while(opModeIsActive()){
             camera.vuforiaLoop();
+            camera.tensorFlowLoop();
+            telemetry.update();
+
+            if(gamepad1.x) {
+                camera.servoBack();
+            }
+
+            if(gamepad1.y) {
+                camera.servoDown();
+            }
+
+            if(gamepad1.b) {
+                camera.servoUp();
+            }
         }
 
         camera.stopVuforia();
+        camera.stopTensorFlow();
     }
 }

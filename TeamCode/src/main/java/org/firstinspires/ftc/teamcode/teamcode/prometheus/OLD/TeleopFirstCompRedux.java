@@ -43,12 +43,8 @@ public class TeleopFirstCompRedux extends LinearOpMode {
 
         @Override
         public void runOpMode() throws InterruptedException {
-<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teamcode/prometheus/opmodes/TeleopFirstCompRedux.java
-                telemetry = FtcDashboard.getInstance().getTelemetry();
-                dt = new DriveTrain(this, true);
-=======
+
                 dt = new DriveTrain(this);
->>>>>>> aa9e2aff7e24b0bdf636dfa31086903ea82483ce:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teamcode/prometheus/OLD/TeleopFirstCompRedux.java
                 dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
                 shooter = new Shooter(this);

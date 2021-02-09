@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.robot;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.Angle;
 
@@ -106,6 +108,7 @@ public class Camera {
     public void initCamera(){
 
         webcamName = opMode.hardwareMap.get(WebcamName.class, "Webcam 1");
+
 
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
@@ -227,6 +230,7 @@ public class Camera {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
 
+
         //TFOD
         int tfodMonitorViewId = opMode.hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", opMode.hardwareMap.appContext.getPackageName());
@@ -234,10 +238,15 @@ public class Camera {
         tfodParameters.minResultConfidence = 0.8f;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_FIRST_ELEMENT, LABEL_SECOND_ELEMENT);
+
+        FtcDashboard.getInstance().startCameraStream(tfod, 0);
+
     }
 
     public void startVuforia(){
+
         targetsUltimateGoal.activate();
+
     }
 
     public void stopVuforia(){
@@ -257,7 +266,9 @@ public class Camera {
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;
                 }
+
                 break;
+
             }
         }
 
@@ -271,15 +282,51 @@ public class Camera {
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
             opMode.telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+
+            double redTowerX = halfField - (translation.get(0));
+            double redTowerY = (-quadField) - (translation.get(1));
+            double redTowerAngle = Math.toDegrees(Math.atan2(redTowerX, redTowerY));
+
+
+            opMode.telemetry.addData("Target X", redTowerX);
+            opMode.telemetry.addData("Target Y", redTowerY);
+            opMode.telemetry.addData("Target angle", redTowerAngle);
         }
         else {
             opMode.telemetry.addData("Visible Target", "none");
         }
-        opMode.telemetry.update();
     }
 
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
+    }
+
+    public void startTensorFlow(){
+        tfod.activate();
+    }
+
+    public void stopTensorFlow(){
+        targetsUltimateGoal.deactivate();
+    }
+
+    public void tensorFlowLoop(){
+        if (tfod != null) {
+            // getUpdatedRecognitions() will return null if no new information is available since
+            // the last time that call was made.
+            List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+            if (updatedRecognitions != null) {
+                opMode.telemetry.addData("# Object Detected", updatedRecognitions.size());
+                // step through the list of recognitions and display boundary info.
+                int i = 0;
+                for (Recognition recognition : updatedRecognitions) {
+                    opMode.telemetry.addData(String.format("label (%d)", i), recognition.getLabel());
+                    opMode.telemetry.addData(String.format("  left,top (%d)", i), "%.03f , %.03f",
+                            recognition.getLeft(), recognition.getTop());
+                    opMode.telemetry.addData(String.format("  right,bottom (%d)", i), "%.03f , %.03f",
+                            recognition.getRight(), recognition.getBottom());
+                }
+            }
+        }
     }
 
     public class ImagePos{

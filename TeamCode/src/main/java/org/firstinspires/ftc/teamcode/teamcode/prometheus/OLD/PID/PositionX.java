@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.PID;
+package org.firstinspires.ftc.teamcode.teamcode.prometheus.OLD.PID;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.TrackerWheels;
 
 @TeleOp()
 @Disabled
-public class AccelerationX extends LinearOpMode {
+public class PositionX extends LinearOpMode {
 
     DriveTrain dt;
     TrackerWheels tw;
@@ -26,13 +26,19 @@ public class AccelerationX extends LinearOpMode {
     double sumError;
     double accelP = -0.01;
     double targetAccel;
+    double maxSpd = 60;
+    double targetDist = 60;
+    double maxAccel = 30;
+    double SDD = 30;
+    //SDD = slow down distance
 
     @Override
     public void runOpMode() throws InterruptedException {
+
         FtcDashboard dashboard = FtcDashboard.getInstance();
         telemetry = dashboard.getTelemetry();
 
-        dt = new DriveTrain(this, true);
+        dt = new DriveTrain(this);
         dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         tw = new TrackerWheels(this);
         waitForStart();
@@ -84,13 +90,28 @@ public class AccelerationX extends LinearOpMode {
 
                 double error = targetspd - vel.x;
 
+                double distance = targetDist - tw.pos.x;
+
+
                 if (gamepad1.x) {
                     sumError += error;
-                    targetspd += targetAccel * time.seconds();
+                    if(targetAccel > 0) {
+                        targetspd = vel.x + targetAccel * time.seconds();
+                        if (targetspd > maxSpd) {
+                            targetspd = maxSpd;
+                            targetAccel = 0;
+                        }
+                    }
+                    if (distance < SDD){
+                        targetAccel = -Math.pow(vel.x, 2) / (2 * distance);
+                        targetspd = vel.x + targetAccel * time.seconds();
+                    }
+
                     dt.setFromAxis(targetspd * P + sumError * I + targetAccel * accelP,0,0);
                 }else {
                     sumError = 0;
                     targetspd = 0;
+                    targetAccel = maxAccel;
                     dt.setFromAxis(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
                 }
 

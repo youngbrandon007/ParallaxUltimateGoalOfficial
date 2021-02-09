@@ -15,6 +15,9 @@ public class Shooter {
     public boolean indexerUp;
     private ServoImplEx pusher;
     private ServoImplEx shooterPusher;
+    private ServoImplEx shooterLiftRight;
+
+    private boolean shooterUp;
 
     private OpMode opMode;
 
@@ -37,6 +40,8 @@ public class Shooter {
         pusher = opMode.hardwareMap.get(ServoImplEx.class, "p");
 
         shooterPusher = opMode.hardwareMap.get(ServoImplEx.class, "sp");
+
+        shooterLiftRight = opMode.hardwareMap.get(ServoImplEx.class, "slr");
     }
 
     public void update(double time) {
@@ -56,12 +61,19 @@ public class Shooter {
     }
 
     public void indexerUp(){
-        leftIndexer.setPosition(0.46);
-        rightIndexer.setPosition(0.51);
+        indexerOn();
+        if(shooterUp){
+            leftIndexer.setPosition(0.47);
+            rightIndexer.setPosition(0.50);
+        }else {
+            leftIndexer.setPosition(0.49);
+            rightIndexer.setPosition(0.48);
+        }
         indexerUp = true;
     }
 
     public void indexerDown(){
+        indexerOn();
         leftIndexer.setPosition(0.61);
         rightIndexer.setPosition(0.36);
         indexerUp = false;
@@ -86,10 +98,27 @@ public class Shooter {
     }
 
     public void shooterPusherOut(){
-        shooterPusher.setPosition(0.55);
+        shooterPusher.setPosition(0.43);
     }
 
     public void shooterPusherBack(){
         shooterPusher.setPosition(0.31);
+    }
+
+
+    public void shooterLiftUp(){
+        shooterUp = true;
+        shooterLiftRight.setPosition(.2);
+        if(indexerUp){
+            indexerUp();
+        }
+    }
+
+    public void shooterLiftDown(){
+        shooterUp = false;
+        shooterLiftRight.setPosition(.8);
+        if(indexerUp){
+            indexerUp();
+        }
     }
 }

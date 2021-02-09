@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
+package org.firstinspires.ftc.teamcode.teamcode.prometheus.OLD;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -18,6 +19,7 @@ import java.util.Collection;
 
 
 @TeleOp(name = "TeleopRedux")
+@Disabled
 public class TeleopFirstCompRedux extends LinearOpMode {
 
         DriveTrain dt;
@@ -41,8 +43,12 @@ public class TeleopFirstCompRedux extends LinearOpMode {
 
         @Override
         public void runOpMode() throws InterruptedException {
+<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teamcode/prometheus/opmodes/TeleopFirstCompRedux.java
                 telemetry = FtcDashboard.getInstance().getTelemetry();
                 dt = new DriveTrain(this, true);
+=======
+                dt = new DriveTrain(this);
+>>>>>>> aa9e2aff7e24b0bdf636dfa31086903ea82483ce:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/teamcode/prometheus/OLD/TeleopFirstCompRedux.java
                 dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
                 shooter = new Shooter(this);

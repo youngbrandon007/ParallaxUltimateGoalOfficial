@@ -9,15 +9,12 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Encoder;
 
 public class TrackerWheels {
     private OpMode opMode;
-//
-//    private Encoder x1;
-//    private Encoder x2;
-//    private Encoder y1;
-    double oldX1;
-    double oldX2;
-    double oldY;
+
+    private Encoder x1encoder;
+    private Encoder x2encoder;
+    private Encoder y1encoder;
     double ticksPerRotation = 8192;
-    double encWheelCirc = 2.28346 * Math.PI;
+    double encWheelDiameter = 2.28346;
 
 
     public Pos pos;
@@ -32,16 +29,16 @@ public class TrackerWheels {
 
         pos = new Pos();
         velocity = new Pos();
-//        //TODO fix wheel radius
-//        x1 = new Encoder();
-//        x1.tickPerRotation = 4096;
-//        x1.wheelRadius = 1;
-//        x2 = new Encoder();
-//        x2.tickPerRotation = 4096;
-//        x2.wheelRadius = 1;
-//        y1 = new Encoder();
-//        y1.tickPerRotation = 4096;
-//        y1.wheelRadius = 1;
+
+        x1encoder = new Encoder();
+        x1encoder.tickPerRotation = ticksPerRotation;
+        x1encoder.wheelDiameter = encWheelDiameter;
+        x2encoder = new Encoder();
+        x2encoder.tickPerRotation = ticksPerRotation;
+        x2encoder.wheelDiameter = encWheelDiameter;
+        y1encoder = new Encoder();
+        y1encoder.tickPerRotation = ticksPerRotation;
+        y1encoder.wheelDiameter = encWheelDiameter;
     }
 
     @Deprecated
@@ -62,31 +59,27 @@ public class TrackerWheels {
     }
 
     public void reset(int x1tick, int x2tick, int y1tick){
-//        x1.reset(x1tick);
-//        x2.reset(x2tick);
-//        y1.reset(y1tick);
-        oldX1 = x1tick;
-        oldX2 = x2tick;
-        oldY = y1tick;
+        x1encoder.reset(x1tick);
+        x2encoder.reset(x2tick);
+        y1encoder.reset(y1tick);
     }
 
     public void update(int encX1, int encX2, int encY, double time){
         oldPos = pos.copy();
-//        x1.update(x1tick);
-//        x2.update(x2tick);
-//        y1.update(y1tick);
+        x1encoder.update(encX1);
+        x2encoder.update(encX2);
+        y1encoder.update(encY);
         double x1;
         double x2;
         double y;
         double distanceX;
         double distanceY;
-        double turnDistance;
         double totalCir = 9*Math.PI;
         Angle turn;
 
-        x1 = (double) (encX1-oldX1)/ticksPerRotation * encWheelCirc;
-        x2 = (double) (encX2-oldX2)/ticksPerRotation * encWheelCirc;
-        y = (double) (encY-oldY)/ticksPerRotation * encWheelCirc;
+        x1 = x1encoder.distance();
+        x2 = x2encoder.distance();
+        y = y1encoder.distance();
 
         distanceX = ((x1+x2)/2);
         distanceY = y;
@@ -104,16 +97,7 @@ public class TrackerWheels {
         velocity.y = distanceY / time;
         velocity.angle.setDegrees(turn.getDegrees() / time);
 
-        opMode.telemetry.addData("distanceX", distanceX);
-        opMode.telemetry.addData("distanceY", distanceY);
-        opMode.telemetry.addData("angle", turn.deg());
-        opMode.telemetry.addData("positionX",pos.x);
-        opMode.telemetry.addData("positionY",pos.y);
-        opMode.telemetry.addData("positionAngle",pos.angle.getDegrees());
-
-        oldX1 = encX1;
-        oldX2 = encX2;
-        oldY = encY;
+        opMode.telemetry.addData("Position",pos);
 
     }
 }

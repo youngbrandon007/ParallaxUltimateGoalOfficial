@@ -24,10 +24,12 @@ public class ShooterTuning extends LinearOpMode {
                 FtcDashboard dashboard = FtcDashboard.getInstance();
                 telemetry = dashboard.getTelemetry();
 
-                dt = new DriveTrain(this, true);
+                dt = new DriveTrain(this);
                 dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 shooter = new Shooter(this);
+
+                shooter.shooterLiftDown();
 
                 waitForStart();
                 while(opModeIsActive()){
@@ -68,7 +70,7 @@ public class ShooterTuning extends LinearOpMode {
                                         shooter.target = 0;
                                 }
                                 if(gamepad1.y){
-                                        shooter.target = 1700;
+                                        shooter.target = 1900;
                                 }
 
 

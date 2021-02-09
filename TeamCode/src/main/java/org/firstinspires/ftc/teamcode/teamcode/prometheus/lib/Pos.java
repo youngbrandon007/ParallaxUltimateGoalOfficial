@@ -27,4 +27,25 @@ public class Pos {
         return new Pos(x,y,angle.copy());
     }
 
+    public Pos sub(Pos other){
+        return new Pos(x - other.x, y - other.y, new Angle(angle.getRadians() - other.angle.getRadians()));
+    }
+
+    public double getDistance(){
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    }
+
+    public Pos rotate(Angle r){
+        double sin = Math.sin(r.getRadians());
+        double cos = Math.cos(r.getRadians());
+        return new Pos(x * cos - y * sin, y * cos + x * sin, new Angle(angle.getRadians() + r.getRadians()));
+    }
+
+    public Angle translationAngle(){
+        return new Angle(Math.atan2(y, x));
+    }
+
+    public String toString(){
+        return "(" + x + ", " + y + ") - " + angle.deg();
+    }
 }

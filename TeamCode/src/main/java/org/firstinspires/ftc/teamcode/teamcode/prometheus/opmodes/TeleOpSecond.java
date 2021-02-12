@@ -162,7 +162,7 @@ public class TeleOpSecond extends LinearOpMode {
                                         wobbleArm.wobbleArm.setPower(0.4);
                                 }
                                 else {
-                                        wobbleArm.wobbleArm.setPower(currentPos);
+                                        wobbleArm.wobbleArm.setPower(0);
                                 }
 
                                 if (gamepad1.dpad_right) {

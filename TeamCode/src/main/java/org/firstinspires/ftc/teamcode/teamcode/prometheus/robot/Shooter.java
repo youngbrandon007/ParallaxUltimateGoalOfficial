@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class Shooter {
    public DcMotor shooter;
@@ -29,6 +30,9 @@ public class Shooter {
     public double previous;
     public double prevError = 0;
     public double target = 1600;
+
+    public ElapsedTime push3 = new ElapsedTime();
+    public boolean autoShoot = false;
 
     public Shooter(OpMode opMode) {
         this.opMode = opMode;
@@ -119,6 +123,34 @@ public class Shooter {
         shooterLiftRight.setPosition(.8);
         if(indexerUp){
             indexerUp();
+        }
+    }
+
+    public void push3Rings(){
+        autoShoot = true;
+        if(push3.seconds() < .5) {
+            indexerUp();
+        }
+        else if(push3.seconds() < .7){
+            shooterPusherOut();
+        }
+        else if(push3.seconds() < .9){
+            shooterPusherBack();
+        }
+        else if(push3.seconds() < 1.1){
+            shooterPusherOut();
+        }
+        else if(push3.seconds() < 1.3){
+            shooterPusherBack();
+        }
+        else if(push3.seconds() < 1.5){
+            shooterPusherOut();
+        }
+        else if(push3.seconds() < 1.7){
+            shooterPusherBack();
+        }
+        else {
+            autoShoot = false;
         }
     }
 }

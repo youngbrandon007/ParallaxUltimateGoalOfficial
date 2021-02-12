@@ -14,7 +14,7 @@ public class MotionProfile {
         double tar = Math.sqrt(Math.abs(2 * maxAcceleration * distanceFromTarget));
 
         if(distanceFromTarget < 0){
-            tar = -tar;
+            return (tar > maxSpeed) ? -maxSpeed : -tar;
         }
 
         return (tar > maxSpeed) ? maxSpeed : tar;

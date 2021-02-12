@@ -29,7 +29,7 @@ public class Movement extends LinearOpMode {
     ElapsedTime loopTime = new ElapsedTime();
 
     MotionProfile moveProfile = new MotionProfile(30, 30);
-    MotionProfile rotProfile = new MotionProfile(1, 1);
+    MotionProfile rotProfile = new MotionProfile(2, 2);
 
     enum Mode{
         X, Y, R
@@ -77,7 +77,7 @@ public class Movement extends LinearOpMode {
                     mode = Mode.Y;
                 }
                 if(gamepad1.b){
-                    mode = mode.Y;
+                    mode = mode.R;
                 }
 
                 if(gamepad1.dpad_left){
@@ -112,13 +112,13 @@ public class Movement extends LinearOpMode {
 
                 switch(var){
                     case P:
-                        p.p += change * 0.0001;
+                        p.p += change * 0.001; // .0001
                         break;
                     case I:
-                        p.i += change * 0.00001;
+                        p.i += change * 0.001; //.00001
                         break;
                     case D:
-                        p.d += change * 0.0001;
+                        p.d += change * 0.000001;
                         break;
                     case F:
                         p.f += change * 0.0001;

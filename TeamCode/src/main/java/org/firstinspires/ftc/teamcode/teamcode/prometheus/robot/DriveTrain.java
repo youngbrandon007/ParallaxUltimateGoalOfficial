@@ -18,9 +18,12 @@ public class DriveTrain {
 
     private OpMode opMode;
 
-    public PIDF xPID = new PIDF(0, -0.0011, 0, -0.013);
-    public PIDF yPID = new PIDF(0, -0.0011, 0, -0.014);
-    public PIDF rPID = new PIDF(0, 0, 0, 0);
+    public PIDF xPID = new PIDF(-0.03139999999999987 ,-0.0033500000000000058, -6.19999999999999E-5, 0);
+    public PIDF yPID = new PIDF(-0.03139999999999987 , -0.0033500000000000058, -6.19999999999999E-5, 0);
+    public PIDF rPID = new PIDF(-0.011999999999999955,   -0.09600000000000007, 1.1000000000000001E-5, 0);
+
+
+
 
     double sumError = 0;
 
@@ -115,7 +118,7 @@ public class DriveTrain {
         opMode.telemetry.addData("Target Speed", targetspd);
     }
 */
-    public void updateMovement(Pos target, MotionProfile moveProfile, MotionProfile rotProfile, double time, boolean setMotors){
+    public void updateMovement(Pos target, MotionProfile moveProfile, MotionProfile rotProfile, double time, boolean setMotors) {
         Pos delta = target.sub(trackerWheels.pos);
 
         opMode.telemetry.addData("Delta", delta);
@@ -125,7 +128,7 @@ public class DriveTrain {
         double moveTargetSpeed = moveProfile.getTargetSpeed(distance);
         double rotTargetSpeed = rotProfile.getTargetSpeed(delta.angle.rad());
 
-        Pos robotDelta = delta.rotate(trackerWheels.pos.angle);
+        Pos robotDelta = delta.rotate(trackerWheels.pos.angle.negative());
 
         opMode.telemetry.addData("Robot Delta", robotDelta);
 
@@ -139,17 +142,29 @@ public class DriveTrain {
         opMode.telemetry.addData("R-Vel", trackerWheels.velocity.angle.rad());
         opMode.telemetry.addData("R-Tar", rotTargetSpeed);
 
-        if(setMotors) {
+        if (setMotors) {
             double x = xPID.update(trackerWheels.velocity.x, move.x, time);
             double y = yPID.update(trackerWheels.velocity.y, move.y, time);
             double r = rPID.update(trackerWheels.velocity.angle.rad(), rotTargetSpeed, time);
+
+            if(Math.abs(robotDelta.x) < 1){
+                x = 0;
+            }
+
+            if (Math.abs(robotDelta.y) < 1){
+                y = 0;
+            }
+
+            if(Math.abs(robotDelta.angle.getDegrees()) < 2){
+                r = 0;
+            }
 
             opMode.telemetry.addData("X OUT", x);
             opMode.telemetry.addData("Y OUT", y);
             opMode.telemetry.addData("R OUT", r);
 
             setFromAxis(x, y, r);
-        }else{
+        } else {
             setFromAxis(0, 0, 0);
             xPID.resetI();
             yPID.resetI();

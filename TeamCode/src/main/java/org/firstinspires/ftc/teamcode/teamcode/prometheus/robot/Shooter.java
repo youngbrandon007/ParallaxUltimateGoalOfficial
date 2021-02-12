@@ -146,5 +146,8 @@ public class Shooter {
         else if(push3.seconds() < 1.2){
             shooterPusherBack();
         }
+        else {
+            autoShoot = false;
+        }
     }
 }

@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Collector;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Shooter;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.WobbleArm;
-@TeleOp
+@TeleOp(name = "febTeleop")
 
 public class Teleop extends LinearOpMode {
     DriveTrain dt;

@@ -128,22 +128,25 @@ public class Shooter {
 
     public void push3Rings(){
         autoShoot = true;
-        if(push3.seconds() < .2){
+        if(push3.seconds() < .5) {
+            indexerUp();
+        }
+        else if(push3.seconds() < .7){
             shooterPusherOut();
         }
-        else if(push3.seconds() < .4){
+        else if(push3.seconds() < .9){
             shooterPusherBack();
         }
-        else if(push3.seconds() < .6){
+        else if(push3.seconds() < 1.1){
             shooterPusherOut();
         }
-        else if(push3.seconds() < .8){
+        else if(push3.seconds() < 1.3){
             shooterPusherBack();
         }
-        else if(push3.seconds() < 1){
+        else if(push3.seconds() < 1.5){
             shooterPusherOut();
         }
-        else if(push3.seconds() < 1.2){
+        else if(push3.seconds() < 1.7){
             shooterPusherBack();
         }
         else {

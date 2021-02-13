@@ -18,9 +18,11 @@ public class DriveTrain {
 
     private OpMode opMode;
 
-    public PIDF xPID = new PIDF(-0.03139999999999987 ,-0.0033500000000000058, -6.19999999999999E-5, 0);
-    public PIDF yPID = new PIDF(-0.03139999999999987 , -0.0033500000000000058, -6.19999999999999E-5, 0);
-    public PIDF rPID = new PIDF(-0.00599999999999955,   -0.09600000000000007, 1.1000000000000001E-5, 0);
+    public PIDF xPID = new PIDF(-0.015,-0.00300000000000058, -0.49999999999999E-5, 0);
+    public PIDF yPID = new PIDF(-0.015, -0.00300000000000058, -0.49999999999999E-5, 0);
+
+    public PIDF rPID = new PIDF(-0.004,   -0.045600000000000007, 0.00000000000000001E-5, 0);
+
 
     //    public PIDF xPID = new PIDF(-0.03139999999999987 ,-0.0033500000000000058, -6.19999999999999E-5, 0);
     //    public PIDF yPID = new PIDF(-0.03139999999999987 , -0.0033500000000000058, -6.19999999999999E-5, 0);
@@ -149,7 +151,7 @@ public class DriveTrain {
             double y = yPID.update(trackerWheels.velocity.y, move.y, time);
             double r = rPID.update(trackerWheels.velocity.angle.rad(), rotTargetSpeed, time);
 
-            if(Math.abs(robotDelta.x) < 1){
+            /*if(Math.abs(robotDelta.x) < 1){
                 x = 0;
             }
 
@@ -159,7 +161,7 @@ public class DriveTrain {
 
             if(Math.abs(robotDelta.angle.getDegrees()) < 2){
                 r = 0;
-            }
+            }*/
 
             opMode.telemetry.addData("X OUT", x);
             opMode.telemetry.addData("Y OUT", y);

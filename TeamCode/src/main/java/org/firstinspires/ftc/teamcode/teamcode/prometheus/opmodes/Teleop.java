@@ -17,6 +17,8 @@ public class Teleop extends LinearOpMode {
     Collector collector;
     WobbleArm wobbleArm;
     Camera camera;
+    boolean collectorOn = false;
+    boolean shooterOn = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,9 +69,38 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
+                collectorOn = true;
                 collector.collector.setPower(1);
             }
 
+<<<<<<< HEAD
+            if (gamepad1.left_bumper) {
+                collectorOn = false;
+                collector.collector.setPower(0);
+            }
+
+            if (collectorOn) {
+                    if (gamepad1.right_trigger > 0 || gamepad1.left_trigger > 0) {
+                        collector.collector.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+                    }
+
+                    else {
+                        collector.collector.setPower(1);
+                    }
+            }
+
+            else {
+                collector.collector.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+            }
+
+            // Shooterupdate function (previous teleop) and turn shooter off 
+            if (shooterOn) {
+
+            }
+
+            if (gamepad1.left_bumper) {
+                shooterOn = true;
+=======
             if (gamepad1.right_trigger > .1){
                 if (gamepad1.right_trigger > 0.5) {
                     collector.collector.setPower(gamepad1.right_trigger);
@@ -87,7 +118,10 @@ public class Teleop extends LinearOpMode {
                 else {
                     collector.collector.setPower(0);
                 }
+>>>>>>> 944fc98dbbb4b71329e102467e9b82f095d6a780
             }
+
+
         }
     }
 }

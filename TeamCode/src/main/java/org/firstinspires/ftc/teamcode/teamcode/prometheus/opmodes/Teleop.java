@@ -72,7 +72,7 @@ public class Teleop extends LinearOpMode {
 
             if (gamepad1.right_trigger > .1){
                 if (gamepad1.right_trigger > 0.5) {
-                    collector.collector.setPower(-gamepad1.right_trigger);
+                    collector.collector.setPower(gamepad1.right_trigger);
                 }
                 else {
                     collector.collector.setPower(0);
@@ -82,7 +82,7 @@ public class Teleop extends LinearOpMode {
 
             if (gamepad1.left_trigger > 0.1){
                 if (gamepad1.left_trigger > 0.5){
-                    collector.collector.setPower(gamepad1.left_trigger);
+                    collector.collector.setPower(-gamepad1.left_trigger);
                 }
                 else {
                     collector.collector.setPower(0);

@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Shooter;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.WobbleArm;
 
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous
+
 public class Autonomous extends LinearOpMode {
 
     DriveTrain dt;
@@ -70,11 +72,19 @@ public class Autonomous extends LinearOpMode {
             switch (action) {
 
                 case DriveForward:
+<<<<<<< HEAD
                     target = (new Pos(0, 0, new Angle()));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Camera;
                         timer.reset();
+=======
+                    Pos target = (new Pos(24, -12, new Angle(0)));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.Camera;
+                        dt.stop();
+>>>>>>> 8ee13e6002318bcd55e11ee1df1c769a17d4bd38
                     }
                     break;
                 case Camera:

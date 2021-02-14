@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Shooter;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.WobbleArm;
 
+@com.qualcomm.robotcore.eventloop.opmode.Autonomous
+
 public class Autonomous extends LinearOpMode {
 
     DriveTrain dt;

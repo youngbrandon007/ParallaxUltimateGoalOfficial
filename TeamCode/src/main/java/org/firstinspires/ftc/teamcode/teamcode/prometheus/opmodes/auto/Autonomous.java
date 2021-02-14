@@ -2,7 +2,11 @@ package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.Angle;
+import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.MotionProfile;
+import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.Pos;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Camera;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Collector;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
@@ -17,10 +21,15 @@ public class Autonomous extends LinearOpMode {
     WobbleArm wobbleArm;
     Camera camera;
 
+    ElapsedTime loopTime = new ElapsedTime();
+
+    MotionProfile moveProfile = new MotionProfile(30, 30);
+    MotionProfile rotProfile = new MotionProfile(2, 2);
+
     enum program {
         DriveForward,
         Camera,
-        Shoot
+        DriveToShoot,
 
     }
 
@@ -47,31 +56,39 @@ public class Autonomous extends LinearOpMode {
 
 
     while (opModeIsActive()) {
-        dt.setFromAxis(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-        camera.vuforiaLoop();
-        camera.tensorFlowLoop();
+        if (loopTime.milliseconds() > 50) {
+            camera.vuforiaLoop();
+            camera.tensorFlowLoop();
 
+            dt.updateTrackerWheels(loopTime.seconds());
+            switch (action) {
 
-        switch(action) {
+                case DriveForward:
+                    Pos target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(new Pos(0, 0, new Angle()), moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.Camera;
 
-            case DriveForward:
-                if (true) {
-                    action = program.Camera;
-                }
-                break;
-            case Camera:
-                if (true) {
-                    action = program.Shoot;
-                }
-                break;
-            case Shoot:
+                    }
+                    break;
+                case Camera:
+                    if (true) {
+                        action = program.DriveToShoot;
+                    }
+                    break;
+                case DriveToShoot:
 
-                break;
+                    break;
             }
-        }
 
+
+            loopTime.reset();
+        }
 
         camera.stopVuforia();
         camera.stopTensorFlow();
+
     }
+    }
+
 }

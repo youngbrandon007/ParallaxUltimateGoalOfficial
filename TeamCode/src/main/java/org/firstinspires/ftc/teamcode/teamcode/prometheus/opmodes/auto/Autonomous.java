@@ -70,7 +70,7 @@ public class Autonomous extends LinearOpMode {
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Camera;
-
+                        dt.stop();
                     }
                     break;
                 case Camera:

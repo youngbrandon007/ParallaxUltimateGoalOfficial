@@ -88,6 +88,7 @@ public class Camera {
 
     public double singleCounter = 0;
     public double quadCounter = 0;
+    public double noneCounter = 0;
 
     public Camera(OpMode opMode){
         this.opMode = opMode;
@@ -336,7 +337,11 @@ public class Camera {
                     quadCounter++;
                 }
                 else {
+                    noneCounter++;
                 }
+                opMode.telemetry.addData("Single Counter", singleCounter);
+                opMode.telemetry.addData("Quad Counter", quadCounter);
+                opMode.telemetry.addData("None Counter", noneCounter);
             }
         }
     }

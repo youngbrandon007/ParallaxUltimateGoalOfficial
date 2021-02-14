@@ -20,6 +20,7 @@ public class Teleop extends LinearOpMode {
     boolean collectorOn = false;
     boolean shooterOn = false;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
         dt = new DriveTrain(this);
@@ -36,8 +37,9 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            dt.setFromAxis(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            //Wobble stuff
+            dt.setFromAxis(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x * 0.5);
+
+            //Wobble Stuff
             if (gamepad1.dpad_up) {
                 wobbleArm.wobbleArm.setPower(1);
             }
@@ -58,6 +60,7 @@ public class Teleop extends LinearOpMode {
                 wobbleArm.servoOpen();
             }
 
+            // Pusher Stuff
             if (gamepad1.b && !shooter.autoShoot) {
                 shooter.autoShoot = true;
                 shooter.push3.reset();
@@ -68,6 +71,7 @@ public class Teleop extends LinearOpMode {
                 shooter.push3Rings();
             }
 
+            // Collector Stuff
             if (gamepad1.right_bumper) {
                 collectorOn = true;
                 collector.collector.setPower(1);
@@ -93,13 +97,23 @@ public class Teleop extends LinearOpMode {
                 collector.collector.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
             }
 
-            // Shooterupdate function (previous teleop) and turn shooter off 
-            if (shooterOn) {
-
+            // Shooter Stuff
+            if (gamepad1.right_bumper) {
+                shooterOn = false;
+                shooter.shooter.setPower(0);
             }
 
             if (gamepad1.left_bumper) {
                 shooterOn = true;
+                shooter.shooter.setPower(1);
+            }
+
+            // Setting collector and shooter off 
+            if (gamepad1.a) {
+                shooterOn = false;
+                collectorOn = false;
+                collector.collector.setPower(0);
+                shooter.shooter.setPower(0);
             }
 
 

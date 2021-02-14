@@ -61,7 +61,13 @@ public class Autonomous extends LinearOpMode {
     camera.startVuforia();
     camera.startTensorFlow();
     camera.servoDown();
+<<<<<<< HEAD
+
+    loopTime.reset();
+    dt.resetTrackerWheels();
+=======
     Pos target;
+>>>>>>> d11930752ced3c9fb180dcccef6ef9673f681964
 
     while (opModeIsActive()) {
         if (loopTime.milliseconds() > 50) {

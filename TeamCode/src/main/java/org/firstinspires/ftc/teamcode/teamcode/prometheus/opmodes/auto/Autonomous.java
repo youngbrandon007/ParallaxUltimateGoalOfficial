@@ -72,19 +72,11 @@ public class Autonomous extends LinearOpMode {
             switch (action) {
 
                 case DriveForward:
-<<<<<<< HEAD
-                    target = (new Pos(0, 0, new Angle()));
-                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
-                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
-                        action = program.Camera;
-                        timer.reset();
-=======
-                    Pos target = (new Pos(24, -12, new Angle(0)));
+                    target = (new Pos(24, -12, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Camera;
                         dt.stop();
->>>>>>> 8ee13e6002318bcd55e11ee1df1c769a17d4bd38
                     }
                     break;
                 case Camera:
@@ -102,6 +94,7 @@ public class Autonomous extends LinearOpMode {
                         action = program.Shoot;
                         timer.reset();
                         shooter.push3.reset();
+                        dt.stop();
                     }
                     break;
                 case Shoot:
@@ -118,6 +111,7 @@ public class Autonomous extends LinearOpMode {
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.DepositWobble1;
                         timer.reset();
+                        dt.stop();
                     }
                     break;
                 case DepositWobble1:
@@ -126,6 +120,7 @@ public class Autonomous extends LinearOpMode {
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.DriveToWobble2;
                         timer.reset();
+                        dt.stop();
                     }
                     break;
                 case DriveToWobble2:
@@ -134,6 +129,7 @@ public class Autonomous extends LinearOpMode {
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.DepositWobble2;
                         timer.reset();
+                        dt.stop();
                     }
                     break;
                 case DepositWobble2:
@@ -141,6 +137,7 @@ public class Autonomous extends LinearOpMode {
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         timer.reset();
+                        dt.stop();
                     }
                     break;
             }

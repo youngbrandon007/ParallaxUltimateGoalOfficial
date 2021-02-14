@@ -88,7 +88,7 @@ public class Autonomous extends LinearOpMode {
 
                     break;
                 case DriveToShoot:
-                    target = (new Pos(0, 0, new Angle()));
+                    target = (new Pos(58, -12, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Shoot;
@@ -100,7 +100,7 @@ public class Autonomous extends LinearOpMode {
                 case Shoot:
                     shooter.push3Rings();
                     if (timer.seconds()>2) {
-                        action = program.DriveToWobble1;
+                        //action = program.DriveToWobble1;
                         shooter.shooter.setPower(0);
                     }
 

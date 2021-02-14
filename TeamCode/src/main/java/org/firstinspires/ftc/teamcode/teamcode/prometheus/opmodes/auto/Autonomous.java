@@ -22,6 +22,7 @@ public class Autonomous extends LinearOpMode {
     Collector collector;
     WobbleArm wobbleArm;
     Camera camera;
+    ElapsedTime timer = new ElapsedTime();
 
     ElapsedTime loopTime = new ElapsedTime();
 
@@ -32,6 +33,11 @@ public class Autonomous extends LinearOpMode {
         DriveForward,
         Camera,
         DriveToShoot,
+        Shoot,
+        DriveToWobble1,
+        DepositWobble1,
+        DriveToWobble2,
+        DepositWobble2,
 
     }
 
@@ -55,9 +61,13 @@ public class Autonomous extends LinearOpMode {
     camera.startVuforia();
     camera.startTensorFlow();
     camera.servoDown();
+<<<<<<< HEAD
 
     loopTime.reset();
     dt.resetTrackerWheels();
+=======
+    Pos target;
+>>>>>>> d11930752ced3c9fb180dcccef6ef9673f681964
 
     while (opModeIsActive()) {
         if (loopTime.milliseconds() > 50) {
@@ -68,7 +78,7 @@ public class Autonomous extends LinearOpMode {
             switch (action) {
 
                 case DriveForward:
-                    Pos target = (new Pos(24, -12, new Angle(0)));
+                    target = (new Pos(24, -12, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Camera;
@@ -76,12 +86,65 @@ public class Autonomous extends LinearOpMode {
                     }
                     break;
                 case Camera:
-                    if (true) {
+                    if (timer.seconds()>2) {
+                        shooter.shooter.setPower(1);
                         action = program.DriveToShoot;
                     }
+
+
                     break;
                 case DriveToShoot:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.Shoot;
+                        timer.reset();
+                        shooter.push3.reset();
+                        dt.stop();
+                    }
+                    break;
+                case Shoot:
+                    shooter.push3Rings();
+                    if (timer.seconds()>2) {
+                        action = program.DriveToWobble1;
+                        shooter.shooter.setPower(0);
+                    }
 
+                    break;
+                case DriveToWobble1:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.DepositWobble1;
+                        timer.reset();
+                        dt.stop();
+                    }
+                    break;
+                case DepositWobble1:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.DriveToWobble2;
+                        timer.reset();
+                        dt.stop();
+                    }
+                    break;
+                case DriveToWobble2:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.DepositWobble2;
+                        timer.reset();
+                        dt.stop();
+                    }
+                    break;
+                case DepositWobble2:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        timer.reset();
+                        dt.stop();
+                    }
                     break;
             }
 

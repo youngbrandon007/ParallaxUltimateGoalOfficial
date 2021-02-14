@@ -58,6 +58,10 @@ public class Autonomous extends LinearOpMode {
 
     waitForStart();
 
+    shooter.shooterPusherBack();
+    shooter.shooterLiftDown();
+    shooter.indexerUp();
+
     camera.startVuforia();
     camera.startTensorFlow();
     camera.servoDown();
@@ -77,16 +81,21 @@ public class Autonomous extends LinearOpMode {
             switch (action) {
 
                 case DriveForward:
-                    target = (new Pos(24, -12, new Angle(0)));
+                    target = (new Pos(24, -16, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        timer.reset();
+                        camera.noneCounter = 0;
+                        camera.singleCounter = 0;
+                        camera.quadCounter = 0;
+
                         action = program.Camera;
                         dt.stop();
                     }
                     break;
                 case Camera:
                     if (timer.seconds()>2) {
-                        shooter.shooter.setPower(1);
+                        shooter.shooter.setPower(-1);
                         action = program.DriveToShoot;
                     }
 

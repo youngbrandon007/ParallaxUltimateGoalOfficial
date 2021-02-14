@@ -65,7 +65,7 @@ public class Autonomous extends LinearOpMode {
 
                 case DriveForward:
                     Pos target = (new Pos(0, 0, new Angle()));
-                    dt.updateMovement(new Pos(0, 0, new Angle()), moveProfile, rotProfile, loopTime.seconds(), true);
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Camera;
 

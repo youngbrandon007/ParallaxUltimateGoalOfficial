@@ -56,6 +56,8 @@ public class Autonomous extends LinearOpMode {
     camera.startTensorFlow();
     camera.servoDown();
 
+    loopTime.reset();
+    dt.resetTrackerWheels();
 
     while (opModeIsActive()) {
         if (loopTime.milliseconds() > 50) {

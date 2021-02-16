@@ -71,6 +71,7 @@ public class Autonomous extends LinearOpMode {
 
     Pos target;
 
+    int rings = 0;
 
     while (opModeIsActive()) {
         if (loopTime.milliseconds() > 50) {
@@ -97,6 +98,13 @@ public class Autonomous extends LinearOpMode {
                     if (timer.seconds()>2) {
                         shooter.shooter.setPower(-1);
                         action = program.DriveToShoot;
+                        if(camera.noneCounter > camera.singleCounter && camera.noneCounter > camera.quadCounter){
+                            rings = 0;
+                        }else if(camera.singleCounter > camera.noneCounter && camera.singleCounter > camera.quadCounter){
+                            rings = 1;
+                        }else{
+                            rings = 4;
+                        }
                     }
 
 
@@ -161,7 +169,13 @@ public class Autonomous extends LinearOpMode {
                     }
                     break;
                 case DepositWobble1:
-                    target = (new Pos(0, 0, new Angle()));
+                    if(rings == 0) { /// rings
+                        target = (new Pos(0, 0, new Angle()));
+                    }else if(rings == 1){ // 1 rings
+                        target = (new Pos(0, 0, new Angle()));
+                    }else{ // 4 rings
+                        target = (new Pos(0, 0, new Angle()));
+                    }
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
                         action = program.DriveToWobble2;

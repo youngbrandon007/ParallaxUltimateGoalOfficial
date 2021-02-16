@@ -127,7 +127,7 @@ public class Autonomous extends LinearOpMode {
 
                     break;
                 case ShootDrive1:
-                    target = (new Pos(58, 3, new Angle(0)));
+                    target = (new Pos(58, 2, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
                         action = program.Shoot2;
@@ -143,7 +143,7 @@ public class Autonomous extends LinearOpMode {
                     }
                     break;
                 case ShootDrive2:
-                    target = (new Pos(58, 11, new Angle(0)));
+                    target = (new Pos(58, 10, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
                         action = program.Shoot3;

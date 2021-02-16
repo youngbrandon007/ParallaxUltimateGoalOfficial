@@ -27,4 +27,26 @@ public class WobbleArm {
     public void servoClose(){
         wobbleServo.setPosition(0.70);
     }
+
+    public void setPosition(int targetPosition) {
+
+        int motorValue = wobbleArm.getCurrentPosition();
+
+        if (targetPosition - motorValue > 100) {
+            wobbleArm.setPower(1);
+        }
+
+        else if (motorValue - targetPosition < -100) {
+            wobbleArm.setPower(-1);
+        }
+
+        else {
+            wobbleArm.setPower(0);
+        }
+
+
+
+    }
+
 }
+

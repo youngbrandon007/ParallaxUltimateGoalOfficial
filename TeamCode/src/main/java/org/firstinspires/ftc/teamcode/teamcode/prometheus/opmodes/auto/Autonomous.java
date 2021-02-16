@@ -161,11 +161,11 @@ public class Autonomous extends LinearOpMode {
                     break;
                 case DriveToWobble1:
                     if(rings == 0) { /// rings
-                        target = (new Pos(0, 0, new Angle()));
+                        target = (new Pos(72, -28, new Angle().setDegrees(-90)));
                     }else if(rings == 1){ // 1 rings
-                        target = (new Pos(0, 0, new Angle()));
+                        target = (new Pos(84, -8, new Angle(0)));
                     }else{ // 4 rings
-                        target = (new Pos(0, 0, new Angle()));
+                        target = (new Pos(108, -28, new Angle().setDegrees(-45)));
                     }
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
@@ -176,11 +176,11 @@ public class Autonomous extends LinearOpMode {
                     break;
                 case DepositWobble1:
                     if(rings == 0) { /// rings
-                        target = (new Pos(0, 0, new Angle()));
+                        target = (new Pos(72, -12, new Angle().setDegrees(-90)));
                     }else if(rings == 1){ // 1 rings
-                        target = (new Pos(0, 0, new Angle()));
+                        target = (new Pos(72, -12, new Angle().setDegrees(-90)));
                     }else{ // 4 rings
-                        target = (new Pos(0, 0, new Angle()));
+                        target = (new Pos(0, 0, new Angle().setDegrees(0)));
                     }
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){

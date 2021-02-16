@@ -82,7 +82,7 @@ public class Autonomous extends LinearOpMode {
             switch (action) {
 
                 case DriveForward:
-                    target = (new Pos(24, -16, new Angle(0)));
+                    target = (new Pos(20, -16, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
                         timer.reset();
@@ -96,7 +96,7 @@ public class Autonomous extends LinearOpMode {
                     break;
                 case Camera:
                     if (timer.seconds()>2) {
-                        shooter.shooter.setPower(-1);
+                        shooter.shooter.setPower(-.7);
                         action = program.DriveToShoot;
                         if(camera.noneCounter > camera.singleCounter && camera.noneCounter > camera.quadCounter){
                             rings = 0;
@@ -110,7 +110,7 @@ public class Autonomous extends LinearOpMode {
 
                     break;
                 case DriveToShoot:
-                    target = (new Pos(58, -5, new Angle(0)));
+                    target = (new Pos(60, 12, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
                         action = program.Shoot1;
@@ -127,7 +127,7 @@ public class Autonomous extends LinearOpMode {
 
                     break;
                 case ShootDrive1:
-                    target = (new Pos(58, 2, new Angle(0)));
+                    target = (new Pos(60, 18, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
                         action = program.Shoot2;
@@ -143,7 +143,7 @@ public class Autonomous extends LinearOpMode {
                     }
                     break;
                 case ShootDrive2:
-                    target = (new Pos(58, 10, new Angle(0)));
+                    target = (new Pos(60, 24, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
                         action = program.Shoot3;
@@ -155,17 +155,17 @@ public class Autonomous extends LinearOpMode {
                 case Shoot3:
                     shooter.push1Ring();
                     if (timer.seconds()>1) {
-                        //action = program.DriveToWobble1;
+                        action = program.DriveToWobble1;
                         shooter.shooter.setPower(0);
                     }
                     break;
                 case DriveToWobble1:
                     if(rings == 0) { /// rings
-                        target = (new Pos(72, -28, new Angle().setDegrees(-90)));
+                        target = (new Pos(72, -24, new Angle().setDegrees(-90)));
                     }else if(rings == 1){ // 1 rings
-                        target = (new Pos(84, -8, new Angle(0)));
+                        target = (new Pos(84, -4, new Angle(0)));
                     }else{ // 4 rings
-                        target = (new Pos(108, -28, new Angle().setDegrees(-45)));
+                        target = (new Pos(108, -20, new Angle().setDegrees(-45)));
                     }
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
@@ -176,15 +176,15 @@ public class Autonomous extends LinearOpMode {
                     break;
                 case DepositWobble1:
                     if(rings == 0) { /// rings
-                        target = (new Pos(72, -12, new Angle().setDegrees(-90)));
+                        target = (new Pos(72, 0, new Angle().setDegrees(-90)));
                     }else if(rings == 1){ // 1 rings
-                        target = (new Pos(72, -12, new Angle().setDegrees(-90)));
-                    }else{ // 4 rings
                         target = (new Pos(72, -12, new Angle().setDegrees(0)));
+                    }else{ // 4 rings
+                        target = (new Pos(72, 24, new Angle().setDegrees(-45)));
                     }
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
-                        action = program.DriveToWobble2;
+                        //action = program.DriveToShoot;
                         timer.reset();
                         dt.stop();
                     }

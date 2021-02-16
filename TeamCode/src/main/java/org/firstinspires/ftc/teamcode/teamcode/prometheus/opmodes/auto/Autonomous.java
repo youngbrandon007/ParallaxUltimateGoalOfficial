@@ -180,7 +180,7 @@ public class Autonomous extends LinearOpMode {
                     }else if(rings == 1){ // 1 rings
                         target = (new Pos(72, -12, new Angle().setDegrees(-90)));
                     }else{ // 4 rings
-                        target = (new Pos(0, 0, new Angle().setDegrees(0)));
+                        target = (new Pos(72, -12, new Angle().setDegrees(0)));
                     }
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){

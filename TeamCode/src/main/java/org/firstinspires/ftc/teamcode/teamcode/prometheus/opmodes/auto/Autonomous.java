@@ -102,7 +102,7 @@ public class Autonomous extends LinearOpMode {
 
                     break;
                 case DriveToShoot:
-                    target = (new Pos(58, 12, new Angle(0)));
+                    target = (new Pos(58, -5, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Shoot1;
@@ -114,13 +114,12 @@ public class Autonomous extends LinearOpMode {
                 case Shoot1:
                     shooter.push1Ring();
                     if (timer.seconds()>1) {
-                        //action = program.ShootDrive1;
-                        shooter.shooter.setPower(0);
+                        action = program.ShootDrive1;
                     }
 
                     break;
                 case ShootDrive1:
-                    target = (new Pos(58, -12, new Angle(0)));
+                    target = (new Pos(58, 3, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Shoot2;
@@ -132,12 +131,11 @@ public class Autonomous extends LinearOpMode {
                 case Shoot2:
                     shooter.push1Ring();
                     if (timer.seconds()>1) {
-                        //action = program.ShootDrive2;
-                        shooter.shooter.setPower(0);
+                        action = program.ShootDrive2;
                     }
                     break;
                 case ShootDrive2:
-                    target = (new Pos(58, -12, new Angle(0)));
+                    target = (new Pos(58, 11, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
                         action = program.Shoot3;
@@ -192,6 +190,7 @@ public class Autonomous extends LinearOpMode {
 
 
             loopTime.reset();
+            telemetry.update();
         }
 
         camera.stopVuforia();

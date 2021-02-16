@@ -22,6 +22,7 @@ public class Autonomous extends LinearOpMode {
     Collector collector;
     WobbleArm wobbleArm;
     Camera camera;
+    ElapsedTime timer = new ElapsedTime();
 
     ElapsedTime loopTime = new ElapsedTime();
 
@@ -32,6 +33,11 @@ public class Autonomous extends LinearOpMode {
         DriveForward,
         Camera,
         DriveToShoot,
+        Shoot1, ShootDrive1, Shoot2, ShootDrive2, Shoot3,
+        DriveToWobble1,
+        DepositWobble1,
+        DriveToWobble2,
+        DepositWobble2,
 
     }
 
@@ -52,9 +58,18 @@ public class Autonomous extends LinearOpMode {
 
     waitForStart();
 
+    shooter.shooterPusherBack();
+    shooter.shooterLiftDown();
+    shooter.indexerUp();
+
     camera.startVuforia();
     camera.startTensorFlow();
     camera.servoDown();
+
+    loopTime.reset();
+    dt.resetTrackerWheels();
+
+    Pos target;
 
 
     while (opModeIsActive()) {
@@ -66,20 +81,112 @@ public class Autonomous extends LinearOpMode {
             switch (action) {
 
                 case DriveForward:
-                    Pos target = (new Pos(24, -12, new Angle(0)));
+                    target = (new Pos(24, -16, new Angle(0)));
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        timer.reset();
+                        camera.noneCounter = 0;
+                        camera.singleCounter = 0;
+                        camera.quadCounter = 0;
+
                         action = program.Camera;
                         dt.stop();
                     }
                     break;
                 case Camera:
-                    if (true) {
+                    if (timer.seconds()>2) {
+                        shooter.shooter.setPower(-1);
                         action = program.DriveToShoot;
                     }
+
+
                     break;
                 case DriveToShoot:
+                    target = (new Pos(58, 12, new Angle(0)));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.Shoot1;
+                        timer.reset();
+                        shooter.push3.reset();
+                        dt.stop();
+                    }
+                    break;
+                case Shoot1:
+                    shooter.push1Ring();
+                    if (timer.seconds()>1) {
+                        //action = program.ShootDrive1;
+                        shooter.shooter.setPower(0);
+                    }
 
+                    break;
+                case ShootDrive1:
+                    target = (new Pos(58, -12, new Angle(0)));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.Shoot2;
+                        timer.reset();
+                        shooter.push3.reset();
+                        dt.stop();
+                    }
+                    break;
+                case Shoot2:
+                    shooter.push1Ring();
+                    if (timer.seconds()>1) {
+                        //action = program.ShootDrive2;
+                        shooter.shooter.setPower(0);
+                    }
+                    break;
+                case ShootDrive2:
+                    target = (new Pos(58, -12, new Angle(0)));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.Shoot3;
+                        timer.reset();
+                        shooter.push3.reset();
+                        dt.stop();
+                    }
+                    break;
+                case Shoot3:
+                    shooter.push1Ring();
+                    if (timer.seconds()>1) {
+                        //action = program.DriveToWobble1;
+                        shooter.shooter.setPower(0);
+                    }
+                    break;
+                case DriveToWobble1:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.DepositWobble1;
+                        timer.reset();
+                        dt.stop();
+                    }
+                    break;
+                case DepositWobble1:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.DriveToWobble2;
+                        timer.reset();
+                        dt.stop();
+                    }
+                    break;
+                case DriveToWobble2:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        action = program.DepositWobble2;
+                        timer.reset();
+                        dt.stop();
+                    }
+                    break;
+                case DepositWobble2:
+                    target = (new Pos(0, 0, new Angle()));
+                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
+                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
+                        timer.reset();
+                        dt.stop();
+                    }
                     break;
             }
 

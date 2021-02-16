@@ -113,7 +113,7 @@ public class Teleop extends LinearOpMode {
 
             if (gamepad1.left_bumper) {
                 shooterOn = true;
-                shooter.shooter.setPower(1);
+                shooter.shooter.setPower(-1);
             }
 
             // Setting collector and shooter off

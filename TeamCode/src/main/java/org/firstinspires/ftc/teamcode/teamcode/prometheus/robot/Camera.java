@@ -330,10 +330,10 @@ public class Camera {
                             recognition.getRight(), recognition.getBottom());
                     label = recognition.getLabel();
                 }
-                if(label == LABEL_FIRST_ELEMENT) {
+                if(label == LABEL_SECOND_ELEMENT) {
                     singleCounter++;
                 }
-                else if(label == LABEL_SECOND_ELEMENT) {
+                else if(label == LABEL_FIRST_ELEMENT) {
                     quadCounter++;
                 }
                 else {

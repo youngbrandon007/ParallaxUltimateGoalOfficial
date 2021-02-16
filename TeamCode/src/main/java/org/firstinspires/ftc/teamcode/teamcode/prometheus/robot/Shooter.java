@@ -153,4 +153,20 @@ public class Shooter {
             autoShoot = false;
         }
     }
+
+    public void push1Ring(){
+        autoShoot = true;
+        if(push3.seconds() < .5) {
+            indexerUp();
+        }
+        else if(push3.seconds() < .7){
+            shooterPusherOut();
+        }
+        else if(push3.seconds() < .9){
+            shooterPusherBack();
+        }
+        else {
+            autoShoot = false;
+        }
+    }
 }

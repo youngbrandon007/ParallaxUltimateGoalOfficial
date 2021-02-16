@@ -160,7 +160,13 @@ public class Autonomous extends LinearOpMode {
                     }
                     break;
                 case DriveToWobble1:
-                    target = (new Pos(0, 0, new Angle()));
+                    if(rings == 0) { /// rings
+                        target = (new Pos(0, 0, new Angle()));
+                    }else if(rings == 1){ // 1 rings
+                        target = (new Pos(0, 0, new Angle()));
+                    }else{ // 4 rings
+                        target = (new Pos(0, 0, new Angle()));
+                    }
                     dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
                     if (target.atPos(dt.trackerWheels.pos, 1, 1)){
                         action = program.DepositWobble1;

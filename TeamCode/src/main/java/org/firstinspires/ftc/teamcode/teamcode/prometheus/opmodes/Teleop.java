@@ -38,10 +38,9 @@ public class Teleop extends LinearOpMode {
 
         camera.servoBack();
         wobbleArm.servoClose();
-        shooter.indexerDown();
+        shooter.shooterLiftDown();
         shooter.pusherBack();
-
-
+        shooter.indexerDown();
 
 
         while (opModeIsActive()) {
@@ -108,12 +107,17 @@ public class Teleop extends LinearOpMode {
             // Shooter Stuff
             if (gamepad1.right_bumper) {
                 shooterOn = false;
+                shooter.pusherBack();
+                shooter.indexerDown();
+                shooter.shooterLiftUp();
                 shooter.shooter.setPower(0);
             }
 
             if (gamepad1.left_bumper) {
                 shooterOn = true;
                 shooter.shooter.setPower(-1);
+                shooter.shooterLiftDown();
+                shooter.pusherOut();
             }
 
             // Setting collector and shooter off
@@ -122,7 +126,9 @@ public class Teleop extends LinearOpMode {
                 collectorOn = false;
                 collector.collector.setPower(0);
                 shooter.shooter.setPower(0);
+
             }
+
 
 
         }

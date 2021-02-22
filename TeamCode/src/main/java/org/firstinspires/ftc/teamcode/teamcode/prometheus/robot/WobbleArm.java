@@ -28,20 +28,25 @@ public class WobbleArm {
         wobbleServo.setPosition(0.70);
     }
 
-    public void setPosition(int targetPosition) {
+    public boolean setPosition(int targetPosition) {
 
         int motorValue = wobbleArm.getCurrentPosition();
 
+        opMode.telemetry.addData("Wobble Ticks", motorValue);
+
         if (targetPosition - motorValue > 100) {
             wobbleArm.setPower(1);
+            return false;
         }
 
-        else if (motorValue - targetPosition < -100) {
+        else if (targetPosition - motorValue < -100) {
             wobbleArm.setPower(-1);
+            return false;
         }
 
         else {
             wobbleArm.setPower(0);
+            return true;
         }
 
 

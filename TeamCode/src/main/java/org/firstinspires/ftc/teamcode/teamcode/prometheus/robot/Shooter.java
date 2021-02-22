@@ -67,11 +67,11 @@ public class Shooter {
     public void indexerUp(){
         indexerOn();
         if(shooterUp){
+            leftIndexer.setPosition(0.45);
+            rightIndexer.setPosition(0.52);
+        }else {
             leftIndexer.setPosition(0.47);
             rightIndexer.setPosition(0.50);
-        }else {
-            leftIndexer.setPosition(0.49);
-            rightIndexer.setPosition(0.48);
         }
         indexerUp = true;
     }
@@ -94,7 +94,7 @@ public class Shooter {
     }
 
     public void pusherOut(){
-        pusher.setPosition(0.45);
+        pusher.setPosition(0.61);
     }
 
     public void pusherBack(){
@@ -128,25 +128,29 @@ public class Shooter {
 
     public void push3Rings(){
         autoShoot = true;
-        if(push3.seconds() < .5) {
+
+        if(push3.seconds() < .3){
+            pusherBack();
+        }else if(push3.seconds() < .7) {
             indexerUp();
-        }
-        else if(push3.seconds() < .7){
-            shooterPusherOut();
+            shooterPusherBack();
         }
         else if(push3.seconds() < .9){
-            shooterPusherBack();
+            shooterPusherOut();
         }
         else if(push3.seconds() < 1.1){
-            shooterPusherOut();
-        }
-        else if(push3.seconds() < 1.3){
             shooterPusherBack();
         }
-        else if(push3.seconds() < 1.5){
+        else if(push3.seconds() < 1.3){
             shooterPusherOut();
         }
+        else if(push3.seconds() < 1.5){
+            shooterPusherBack();
+        }
         else if(push3.seconds() < 1.7){
+            shooterPusherOut();
+        }
+        else if(push3.seconds() < 1.9){
             shooterPusherBack();
         }
         else {

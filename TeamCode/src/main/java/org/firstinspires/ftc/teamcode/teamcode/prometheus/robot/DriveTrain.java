@@ -1,8 +1,15 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.robot;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.Angle;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.MotionProfile;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.lib.Pos;
@@ -18,10 +25,10 @@ public class DriveTrain {
 
     private OpMode opMode;
 
-    public PIDF xPID = new PIDF(-0.015,-0.00300000000000058, -0.49999999999999E-5, 0);
-    public PIDF yPID = new PIDF(-0.015, -0.00300000000000058, -0.49999999999999E-5, 0);
+    public PIDF xPID = new PIDF(-0.012,-0.00300000000000058, -0.89999999999999E-5, 0);
+    public PIDF yPID = new PIDF(-0.012, -0.00300000000000058, -0.89999999999999E-5, 0);
 
-    public PIDF rPID = new PIDF(-0.004,   -0.045600000000000007, 0.00000000000000001E-5, 0);
+    public PIDF rPID = new PIDF(-0.012000000000000004 ,   -0.04460000000000001 , 7.000000000000008E-6, 0);
 
 
     //    public PIDF xPID = new PIDF(-0.03139999999999987 ,-0.0033500000000000058, -6.19999999999999E-5, 0);
@@ -33,7 +40,7 @@ public class DriveTrain {
 
     public TrackerWheels trackerWheels;
 
-    public DriveTrain(OpMode opMode){
+    public DriveTrain(OpMode opMode) {
         this.opMode = opMode;
         frontRight = opMode.hardwareMap.get(DcMotor.class, "fr");
         frontLeft = opMode.hardwareMap.get(DcMotor.class, "fl");
@@ -43,13 +50,20 @@ public class DriveTrain {
         motors = new DcMotor[]{frontRight, frontLeft, backLeft, backRight};
 
         trackerWheels = new TrackerWheels(opMode);
-    }
 
+    }
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior){
         for(DcMotor m : motors){
             m.setZeroPowerBehavior(behavior);
         }
+    }
+
+    public void fieldCentric(double y, double x, double r, Angle a){
+        double nx = Math.cos(a.getRadians()) * x - Math.sin(a.getRadians()) * y;
+        double ny = Math.cos(a.getRadians()) * y + Math.sin(a.getRadians()) * x;
+
+        setFromAxis(ny, nx, r);
     }
 
     // Y is forward/back (forward is positive)

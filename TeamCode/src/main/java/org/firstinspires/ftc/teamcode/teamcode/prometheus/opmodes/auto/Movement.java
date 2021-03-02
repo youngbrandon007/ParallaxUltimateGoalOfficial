@@ -28,7 +28,7 @@ public class Movement extends LinearOpMode {
 
     ElapsedTime loopTime = new ElapsedTime();
 
-    MotionProfile moveProfile = new MotionProfile(30, 30);
+    MotionProfile moveProfile = new MotionProfile(60, 40);
     MotionProfile rotProfile = new MotionProfile(2, 2);
 
     enum Mode{

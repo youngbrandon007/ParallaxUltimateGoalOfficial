@@ -18,7 +18,7 @@ public class Shooter {
     private ServoImplEx shooterPusher;
     private ServoImplEx shooterLiftRight;
 
-    private boolean shooterUp;
+    private int shooterUp = 0;
 
     private OpMode opMode;
 
@@ -33,6 +33,9 @@ public class Shooter {
 
     public ElapsedTime push3 = new ElapsedTime();
     public boolean autoShoot = false;
+
+    public ElapsedTime pusherTimer = new ElapsedTime();
+    public boolean pusherTimerOn = false;
 
     public Shooter(OpMode opMode) {
         this.opMode = opMode;
@@ -66,9 +69,12 @@ public class Shooter {
 
     public void indexerUp(){
         indexerOn();
-        if(shooterUp){
+        if(shooterUp == 2) {
             leftIndexer.setPosition(0.45);
             rightIndexer.setPosition(0.52);
+        }else if(shooterUp == 1){
+            leftIndexer.setPosition(0.46);
+            rightIndexer.setPosition(0.51);
         }else {
             leftIndexer.setPosition(0.47);
             rightIndexer.setPosition(0.50);
@@ -78,9 +84,14 @@ public class Shooter {
 
     public void indexerDown(){
         indexerOn();
-        leftIndexer.setPosition(0.61);
-        rightIndexer.setPosition(0.36);
+        leftIndexer.setPosition(0.59);
+        rightIndexer.setPosition(0.38);
         indexerUp = false;
+    }
+
+    public void indexerAutoInit(){
+        leftIndexer.setPosition(0.55);
+        rightIndexer.setPosition(0.43);
     }
 
     public void indexerOn(){
@@ -101,8 +112,22 @@ public class Shooter {
         pusher.setPosition(0.70);
     }
 
+    public void pusherMiddle() {pusher.setPosition(0.67);}
+
+    public void pusherWait(){
+        if(!pusherTimerOn){
+            pusherTimer.reset();
+        }
+        pusherTimerOn = true;
+        if(pusherTimer.seconds() > .5 && pusherTimerOn){
+            pusherMiddle();
+            pusherTimerOn = false;
+        }
+
+    }
+
     public void shooterPusherOut(){
-        shooterPusher.setPosition(0.43);
+        shooterPusher.setPosition(0.42);
     }
 
     public void shooterPusherBack(){
@@ -111,7 +136,7 @@ public class Shooter {
 
 
     public void shooterLiftUp(){
-        shooterUp = true;
+        shooterUp = 2;
         shooterLiftRight.setPosition(.2);
         if(indexerUp){
             indexerUp();
@@ -119,8 +144,16 @@ public class Shooter {
     }
 
     public void shooterLiftDown(){
-        shooterUp = false;
+        shooterUp = 0;
         shooterLiftRight.setPosition(.8);
+        if(indexerUp){
+            indexerUp();
+        }
+    }
+
+    public void shooterLiftMiddle(){
+        shooterUp = 1;
+        shooterLiftRight.setPosition(.6);
         if(indexerUp){
             indexerUp();
         }
@@ -167,6 +200,19 @@ public class Shooter {
             shooterPusherOut();
         }
         else if(push3.seconds() < .9){
+            shooterPusherBack();
+        }
+        else {
+            autoShoot = false;
+        }
+    }
+
+    public void push1RingWithoutPrep(){
+        autoShoot = true;
+        if(push3.seconds() < .2){
+            shooterPusherOut();
+        }
+        else if(push3.seconds() < .4){
             shooterPusherBack();
         }
         else {

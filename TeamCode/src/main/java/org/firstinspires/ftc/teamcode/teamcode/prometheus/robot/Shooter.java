@@ -23,19 +23,26 @@ public class Shooter {
     private OpMode opMode;
 
     public double f = .000380;
-    public double p = .00050;
-    public double i = 2.25E-8;
+    public double p = 7.100000000000006E-4;
+    public double i = 9.500000000000002E-9;
     public double d = .0000;
     public double sumError;
     public double previous;
     public double prevError = 0;
-    public double target = 1600;
+    public final double ShooterGoalSpeed = 2400;
+    public final double ShooterPowerSpeed = 2000;
+    public double target = 0;
 
     public ElapsedTime push3 = new ElapsedTime();
     public boolean autoShoot = false;
 
     public ElapsedTime pusherTimer = new ElapsedTime();
     public boolean pusherTimerOn = false;
+
+    public enum ShooterState{
+        Collecting, ActionPrep, Prep, ActionPrepShooter, PrepShoot,  ActionShoot
+    }
+    public ShooterState state = ShooterState.Collecting;
 
     public Shooter(OpMode opMode) {
         this.opMode = opMode;
@@ -55,11 +62,27 @@ public class Shooter {
         double current = -shooter.getCurrentPosition();
         double speed = (current - previous)/time;
         double error = target - speed;
-        double derv = (error - prevError) / time;
-        sumError += error;
-        double pid = (f * target) + (p * error)  + (i * sumError * target) + (d * derv);
-        shooter.setPower(-pid);
-        opMode.telemetry.addData("PID Value", pid);
+        if(error > 300) {
+            shooter.setPower(-1.0);
+
+            opMode.telemetry.addData("PID Value", 1.0);
+        }else if(error < -300){
+            shooter.setPower(1.0);
+
+            opMode.telemetry.addData("PID Value", -1.0);
+        }else {
+            double derv = (error - prevError) / time;
+            sumError += error;
+            double pid = (f * target) + (p * error)  + (i * sumError * target) + (d * derv);
+
+            if(Math.abs(pid) > 1){
+                sumError -= error;
+            }
+            shooter.setPower(-pid);
+
+            opMode.telemetry.addData("PID Value", pid);
+        }
+
         opMode.telemetry.addData("Ticks", speed);
         opMode.telemetry.addData("rpm", speed/28 * 60);
 
@@ -191,6 +214,32 @@ public class Shooter {
         }
     }
 
+    public boolean push3RingsWithoutPrep(){
+        autoShoot = true;
+
+        if(push3.seconds() < .2){
+            shooterPusherOut();
+        }
+        else if(push3.seconds() < .4){
+            shooterPusherBack();
+        }
+        else if(push3.seconds() < .6){
+            shooterPusherOut();
+        }
+        else if(push3.seconds() < .8){
+            shooterPusherBack();
+        }
+        else if(push3.seconds() < 1.0){
+            shooterPusherOut();
+        }
+        else{
+            shooterPusherBack();
+            autoShoot = false;
+            return true;
+        }
+        return false;
+    }
+
     public void push1Ring(){
         autoShoot = true;
         if(push3.seconds() < .5) {
@@ -218,5 +267,18 @@ public class Shooter {
         else {
             autoShoot = false;
         }
+    }
+
+    public boolean indexerUpSequence(){
+        if(push3.seconds() < .2){
+            pusherBack();
+        }
+        else if(push3.seconds() < .7){
+            indexerUp();
+        }
+        else {
+            return true;
+        }
+        return false;
     }
 }

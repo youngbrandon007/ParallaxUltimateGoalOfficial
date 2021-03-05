@@ -70,7 +70,7 @@ public class ShooterTuning extends LinearOpMode {
                                         shooter.target = 0;
                                 }
                                 if(gamepad1.y){
-                                        shooter.target = 1900;
+                                        shooter.target = 2400;
                                 }
 
 

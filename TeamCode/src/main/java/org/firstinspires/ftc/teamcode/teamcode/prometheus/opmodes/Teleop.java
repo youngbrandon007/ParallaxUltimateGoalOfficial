@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
 
+import android.app.ActionBar;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,7 +25,6 @@ public class Teleop extends LinearOpMode {
     WobbleArm wobbleArm;
     Camera camera;
     boolean collectorOn = false;
-    boolean shooterOn = false;
 
 
     MotionProfile moveProfile = new MotionProfile(60, 40);
@@ -78,6 +79,9 @@ public class Teleop extends LinearOpMode {
         double calAngle = 0;
 
         while (opModeIsActive() && !isStopRequested()) {
+
+            telemetry.addData("Mag", wobbleArm.mag.isPressed());
+
             if(action == AutoShoot.Not){
                 //dt.setFromAxis(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x * 0.75);
                 dt.fieldCentric(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x * 0.75, new Angle().setDegrees(dt.trackerWheels.pos.angle.getDegrees() - calAngle));
@@ -108,7 +112,92 @@ public class Teleop extends LinearOpMode {
                 wobbleArm.servoOpen();
             }
 
-            // Pusher Stuff
+            //SHOOTER
+            switch(shooter.state){
+
+                case Collecting:
+                    shooter.target = 0;
+
+                    if(gamepad1.left_bumper || gamepad2.left_bumper){
+                        shooter.state = Shooter.ShooterState.ActionPrep;
+                    }
+
+                    break;
+                case ActionPrep:
+
+                    collectorOn = false;
+                    collector.collector.setPower(0);
+
+                    shooter.pusherOut();
+
+                    shooter.target = shooter.ShooterGoalSpeed;
+
+                    shooter.state = Shooter.ShooterState.Prep;
+
+                    break;
+                case Prep:
+
+                    if(gamepad2.b){
+                        shooter.state = Shooter.ShooterState.ActionPrepShooter;
+                        shooter.push3.reset();
+                    }
+
+                    break;
+                case ActionPrepShooter:
+
+                    if(shooter.indexerUpSequence()){
+                        shooter.state = Shooter.ShooterState.PrepShoot;
+                    }
+
+                    break;
+                case PrepShoot:
+                    if(gamepad1.b){
+                        shooter.push3.reset();
+                        shooter.state = Shooter.ShooterState.ActionShoot;
+                    }
+                    break;
+                case ActionShoot:
+                    if(shooter.push3RingsWithoutPrep()){
+                        shooter.state = Shooter.ShooterState.Collecting;
+
+                        collectorOn = true;
+                        collector.collector.setPower(1);
+                        shooter.indexerDown();
+                    }
+                    break;
+
+            }
+
+            if(gamepad1.right_bumper || gamepad2.right_bumper){
+                shooter.shooterPusherBack();
+                switch(shooter.state) {
+
+                    case Collecting:
+                    case ActionPrep:
+                    case Prep:
+                        shooter.pusherBack();
+                        shooter.state = Shooter.ShooterState.Collecting;
+                        break;
+                    case ActionPrepShooter:
+
+                        break;
+                    case PrepShoot:
+                    case ActionShoot:
+                        shooter.indexerDown();
+                        shooter.state = Shooter.ShooterState.Collecting;
+                        break;
+                }
+
+
+
+                collectorOn = true;
+                collector.collector.setPower(1);
+            }
+
+            /*
+            // Pusher Stuft
+
+            //TODO
             if (gamepad1.b && !shooter.autoShoot) {
                 shooter.autoShoot = true;
                 shooter.push3.reset();
@@ -130,6 +219,7 @@ public class Teleop extends LinearOpMode {
                 collectorOn = false;
                 collector.collector.setPower(0);
             }
+             */
 
             if (collectorOn) {
                     if (gamepad1.right_trigger > 0 || gamepad1.left_trigger > 0) {
@@ -145,7 +235,11 @@ public class Teleop extends LinearOpMode {
                 collector.collector.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
             }
 
+
+
+            /*
             // Shooter Stuff
+            //TODO
             if (gamepad1.right_bumper || gamepad2.right_bumper) {
                 shooterOn = false;
                 shooter.pusherBack();
@@ -175,6 +269,9 @@ public class Teleop extends LinearOpMode {
 
             }
 
+             */
+
+            /* OLD
             if(gamepad2.left_stick_y < -0.5){
                 shooter.shooterLiftMiddle();
                 shoot = 1;
@@ -184,6 +281,10 @@ public class Teleop extends LinearOpMode {
                 shoot = 0;
                 shooter.shooterLiftDown();
             }
+            */
+
+            /*
+            //TODO
 
             if(shooter.pusherTimerOn){
                 shooter.pusherWait();
@@ -192,6 +293,7 @@ public class Teleop extends LinearOpMode {
             if(gamepad2.left_trigger > .7){
                 shooter.shooter.setPower(-.7);
             }
+             */
 
             if(action == AutoShoot.Not && gamepad1.y) {
                 dt.resetTrackerWheels();
@@ -202,11 +304,18 @@ public class Teleop extends LinearOpMode {
 
                 timer.reset();
                 action = AutoShoot.Prep;
-                shooter.shooter.setPower(-.7);
+                shooter.target = shooter.ShooterPowerSpeed;
             }
 
             if(loopTime.milliseconds() > 50) {
                 dt.updateTrackerWheels(loopTime.seconds());
+
+                if(shooter.target == 0){
+                    shooter.shooter.setPower(0);
+                }else{
+                    shooter.update(loopTime.seconds());
+                }
+
                 switch (action) {
                     case Not:
                         break;

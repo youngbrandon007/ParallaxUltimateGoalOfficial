@@ -101,11 +101,11 @@ public class Camera {
     }
 
     public void servoUp(){
-        servo.setPosition(.7);
+        servo.setPosition(.6);
     }
 
     public void servoDown(){
-        servo.setPosition(.8);
+        servo.setPosition(.7);
     }
 
     public void initCamera(){

@@ -24,7 +24,7 @@ public class Shooter {
 
     public double f = .000380;
     public double p = 7.100000000000006E-4;
-    public double i = 9.500000000000002E-9;
+    public double i = 9.500000000000002E-9; // 9.5000000000000016E-9
     public double d = .0000;
     public double sumError;
     public double previous;
@@ -85,6 +85,7 @@ public class Shooter {
 
         opMode.telemetry.addData("Ticks", speed);
         opMode.telemetry.addData("rpm", speed/28 * 60);
+        opMode.telemetry.addData("Total I Value", sumError);
 
         previous = current;
         prevError = error;

@@ -25,12 +25,17 @@ public class DriveTrain {
 
     private OpMode opMode;
 
-    public PIDF xPID = new PIDF(-0.012,-0.00300000000000058, -0.89999999999999E-5, 0);
-    public PIDF yPID = new PIDF(-0.012, -0.00300000000000058, -0.89999999999999E-5, 0);
+    public PIDF xPID = new PIDF(-0.02200000000000001, -6.000000000005866E-4, 9.867933835512599E-20, 0);
+    public PIDF yPID = new PIDF(0, 0, 0, 0);
+    public PIDF rPID = new PIDF(0 ,   0 , 0, 0);
 
-    public PIDF rPID = new PIDF(-0.012000000000000004 ,   -0.04460000000000001 , 7.000000000000008E-6, 0);
 
+    //Second TOurnmanet
+    //public PIDF xPID = new PIDF(-0.012,-0.00300000000000058, -0.89999999999999E-5, 0);
+    //public PIDF yPID = new PIDF(-0.012, -0.00300000000000058, -0.89999999999999E-5, 0);
+    //public PIDF rPID = new PIDF(-0.012000000000000004 ,   -0.04460000000000001 , 7.000000000000008E-6, 0);
 
+    //First Tournament
     //    public PIDF xPID = new PIDF(-0.03139999999999987 ,-0.0033500000000000058, -6.19999999999999E-5, 0);
     //    public PIDF yPID = new PIDF(-0.03139999999999987 , -0.0033500000000000058, -6.19999999999999E-5, 0);
     //    public PIDF rPID = new PIDF(-0.00599999999999955,   -0.09600000000000007, 1.1000000000000001E-5, 0);
@@ -183,7 +188,8 @@ public class DriveTrain {
 
             setFromAxis(x, y, r);
         } else {
-            setFromAxis(0, 0, 0);
+            setFromAxis(opMode.gamepad1.left_stick_y, opMode.gamepad1.left_stick_x, opMode.gamepad1.right_stick_x * 0.75);
+
             xPID.resetI();
             yPID.resetI();
             rPID.resetI();

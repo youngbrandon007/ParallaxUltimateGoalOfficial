@@ -92,7 +92,7 @@ public class Teleop extends LinearOpMode {
             }
 
             //Wobble Stuff
-            if (gamepad1.dpad_up || gamepad2.dpad_up) {
+            if ((gamepad1.dpad_up || gamepad2.dpad_up) && wobbleArm.mag.isPressed() == false) {
                 wobbleArm.wobbleArm.setPower(-1);
             }
 
@@ -111,6 +111,7 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.dpad_left || gamepad2.x) {
                 wobbleArm.servoOpen();
             }
+
 
             //SHOOTER
             switch(shooter.state){

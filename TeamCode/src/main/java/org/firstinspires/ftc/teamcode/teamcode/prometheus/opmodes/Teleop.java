@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.auto.Autonomou
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Camera;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Collector;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
+import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.SaveGetFile;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Shooter;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.WobbleArm;
 @TeleOp(name = "febTeleop")
@@ -59,6 +60,9 @@ public class Teleop extends LinearOpMode {
 
         camera = new Camera(this);
 
+        Pos p = SaveGetFile.getPosition();
+        dt.trackerWheels.pos = p;
+        dt.trackerWheels.oldPos = p;
 
         waitForStart();
 

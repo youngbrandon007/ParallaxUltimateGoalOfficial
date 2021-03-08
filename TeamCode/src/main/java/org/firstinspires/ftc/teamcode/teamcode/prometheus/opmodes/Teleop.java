@@ -45,6 +45,7 @@ public class Teleop extends LinearOpMode {
 
     ElapsedTime timer = new ElapsedTime();
     ElapsedTime loopTime = new ElapsedTime();
+    ElapsedTime spam = new ElapsedTime();
 
 
     @Override
@@ -127,6 +128,14 @@ public class Teleop extends LinearOpMode {
                         shooter.state = Shooter.ShooterState.ActionPrep;
                     }
 
+                    if(spam.seconds() < .2){
+                        shooter.pusherBack();
+                    }else if(spam.seconds() < .4){
+                        shooter.pusherOut();
+                    }else{
+                        spam.reset();
+                    }
+
                     break;
                 case ActionPrep:
 
@@ -138,6 +147,8 @@ public class Teleop extends LinearOpMode {
                     shooter.target = shooter.ShooterGoalSpeed;
 
                     shooter.state = Shooter.ShooterState.Prep;
+
+                    shooter.shooterLiftMiddle();
 
                     break;
                 case Prep:
@@ -168,6 +179,8 @@ public class Teleop extends LinearOpMode {
                         collectorOn = true;
                         collector.collector.setPower(1);
                         shooter.indexerDown();
+                        shooter.shooterLiftUp();
+                        spam.reset();
                     }
                     break;
 
@@ -175,6 +188,9 @@ public class Teleop extends LinearOpMode {
 
             if(gamepad1.right_bumper || gamepad2.right_bumper){
                 shooter.shooterPusherBack();
+                shooter.shooterLiftUp();
+                spam.reset();
+
                 switch(shooter.state) {
 
                     case Collecting:

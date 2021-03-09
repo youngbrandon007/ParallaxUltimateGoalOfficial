@@ -105,7 +105,7 @@ public class Camera {
     }
 
     public void servoDown(){
-        servo.setPosition(.7);
+        servo.setPosition(.75);
     }
 
     public void initCamera(){

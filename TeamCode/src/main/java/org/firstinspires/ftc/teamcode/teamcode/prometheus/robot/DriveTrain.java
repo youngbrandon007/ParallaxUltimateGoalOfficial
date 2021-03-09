@@ -25,14 +25,24 @@ public class DriveTrain {
 
     private OpMode opMode;
 
+    //ZEROS
+ //   public PIDF xPID = new PIDF(0,  0, 0, 0);
+//    public PIDF yPID = new PIDF(0,   0 , 0, 0);
+//    public PIDF rPID = new PIDF(0,  0, 0, 0);
+
+    public PIDF xPID = new PIDF(-0.010000000000000006  ,-9.0E-4 ,4.999999999999998E-4 , 0);
+     public PIDF yPID = new PIDF(-0.010000000000000006  ,-9.0E-4 ,4.999999999999998E-4 , 0);
+    public PIDF rPID = new PIDF(-0.0800000000000009 ,  -0.04000000000000012, 0.0039999999999999975 , 0);
+
     // 3/5/21 PID TUNING W/ LAKSHMI :) AND prathik
     //public PIDF xPID = new PIDF(-0.02200000000000001, -6.000000000005866E-4, 9.867933835512599E-20, 0);
     //public PIDF yPID = new PIDF(-0.02200000000000001, -6.000000000005866E-4, 9.867933835512599E-20, 0);
     //public PIDF rPID = new PIDF(0 ,   0 , 0, 0);
 
-    public PIDF xPID = new PIDF(-0.013999999999999998, -6.000000000005866E-4, 9.867933835512599E-20, 0);
-    public PIDF yPID = new PIDF(-0.013999999999999998,   -6.000000000005866E-4 , 9.867933835512599E-20, 0);
-    public PIDF rPID = new PIDF(-0.05800000000000005,  -0.050300000000001, 0, 0);
+    //3/9/2021
+    //public PIDF xPID = new PIDF(-0.013999999999999998, -6.000000000005866E-4, 9.867933835512599E-20, 0);
+    //public PIDF yPID = new PIDF(-0.013999999999999998,   -6.000000000005866E-4 , 9.867933835512599E-20, 0);
+    //public PIDF rPID = new PIDF(-0.05800000000000005,  -0.050300000000001, 0, 0);
 
 
     //Second TOurnmanet
@@ -152,9 +162,10 @@ public class DriveTrain {
         opMode.telemetry.addData("Delta", delta);
 
         double distance = delta.getDistance();
+        double speed = trackerWheels.velocity.getDistance();
 
-        double moveTargetSpeed = moveProfile.getTargetSpeed(distance);
-        double rotTargetSpeed = rotProfile.getTargetSpeed(delta.angle.rad());
+        double moveTargetSpeed = moveProfile.getTargetSpeed(distance, speed, 0.2);
+        double rotTargetSpeed = rotProfile.getTargetSpeed(delta.angle.rad(), trackerWheels.velocity.angle.rad(), 0.2);
 
         Pos robotDelta = delta.rotate(trackerWheels.pos.angle.negative());
 

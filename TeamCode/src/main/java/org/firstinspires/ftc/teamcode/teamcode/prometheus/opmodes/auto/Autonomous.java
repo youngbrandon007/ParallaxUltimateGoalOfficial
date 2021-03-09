@@ -27,8 +27,8 @@ public class Autonomous extends LinearOpMode {
 
     ElapsedTime loopTime = new ElapsedTime();
 
-    MotionProfile moveProfile = new MotionProfile(100, 80);
-    MotionProfile rotProfile = new MotionProfile(3, 2);
+    MotionProfile moveProfile = new MotionProfile(100, 120);
+    MotionProfile rotProfile = new MotionProfile(3, 4);
 
     enum program {
         DriveForward,

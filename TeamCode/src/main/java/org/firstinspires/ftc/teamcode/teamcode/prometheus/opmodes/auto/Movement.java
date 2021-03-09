@@ -28,8 +28,8 @@ public class Movement extends LinearOpMode {
 
     ElapsedTime loopTime = new ElapsedTime();
 
-    MotionProfile moveProfile = new MotionProfile(100, 80);
-    MotionProfile rotProfile = new MotionProfile(3, 2);
+    MotionProfile moveProfile = new MotionProfile(100, 120);
+    MotionProfile rotProfile = new MotionProfile(3, 4);
 
     enum Mode{
         X, Y, R
@@ -118,7 +118,7 @@ public class Movement extends LinearOpMode {
                         p.i += change * 0.0001; //.00001
                         break;
                     case D:
-                        p.d += change * 0.000001;
+                        p.d += change * 0.0001;
                         break;
                     case F:
                         p.f += change * 0.0001;

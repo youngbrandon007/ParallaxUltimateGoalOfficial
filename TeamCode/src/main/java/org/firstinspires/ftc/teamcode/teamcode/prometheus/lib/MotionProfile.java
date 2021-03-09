@@ -9,14 +9,16 @@ public class MotionProfile {
         maxAcceleration = acceleration;
     }
 
-    public double getTargetSpeed(double distanceFromTarget){
+    public double getTargetSpeed(double distanceFromTarget, double curSpeed, double futureTime){
         //s^2 = s0^2 + 2 a distance
         double tar = Math.sqrt(Math.abs(2 * maxAcceleration * distanceFromTarget));
 
-        if(distanceFromTarget < 0){
-            return (tar > maxSpeed) ? -maxSpeed : -tar;
+        double newSpeed = Math.abs(curSpeed) + maxAcceleration * futureTime;
+
+        if(newSpeed < tar){
+            tar = newSpeed;
         }
 
-        return (tar > maxSpeed) ? maxSpeed : tar;
+        return ((tar > maxSpeed) ? maxSpeed : tar) * ((distanceFromTarget < 0) ? -1 : 1);
     }
 }

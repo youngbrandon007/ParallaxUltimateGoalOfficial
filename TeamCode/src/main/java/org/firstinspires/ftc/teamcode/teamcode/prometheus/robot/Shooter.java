@@ -59,6 +59,9 @@ public class Shooter {
     }
 
     public void update(double time) {
+        if(time <= 0){
+            time = 1;
+        }
         double current = -shooter.getCurrentPosition();
         double speed = (current - previous)/time;
         double error = target - speed;

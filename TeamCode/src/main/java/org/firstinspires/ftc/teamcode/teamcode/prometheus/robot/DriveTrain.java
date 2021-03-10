@@ -30,9 +30,9 @@ public class DriveTrain {
 //    public PIDF yPID = new PIDF(0,   0 , 0, 0);
 //    public PIDF rPID = new PIDF(0,  0, 0, 0);
 
-    public PIDF xPID = new PIDF(-0.010000000000000006  ,-9.0E-4 ,4.999999999999998E-4 , 0);
-     public PIDF yPID = new PIDF(-0.010000000000000006  ,-9.0E-4 ,4.999999999999998E-4 , 0);
-    public PIDF rPID = new PIDF(-0.0800000000000009 ,  -0.04000000000000012, 0.0039999999999999975 , 0);
+    public PIDF xPID = new PIDF(-0.010000000000000006  ,-1.125E-5,4.999999999999998E-4 , 0);
+     public PIDF yPID = new PIDF(-0.010000000000000006  ,-1.125E-5,4.999999999999998E-4 , 0);
+    public PIDF rPID = new PIDF(-0.0800000000000009 ,  -0.02000000000000012, 0.0039999999999999975 , 0);
 
     // 3/5/21 PID TUNING W/ LAKSHMI :) AND prathik
     //public PIDF xPID = new PIDF(-0.02200000000000001, -6.000000000005866E-4, 9.867933835512599E-20, 0);
@@ -159,27 +159,27 @@ public class DriveTrain {
     public void updateMovement(Pos target, MotionProfile moveProfile, MotionProfile rotProfile, double time, boolean setMotors) {
         Pos delta = target.sub(trackerWheels.pos);
 
-        opMode.telemetry.addData("Delta", delta);
+        //opMode.telemetry.addData("Delta", delta);
 
         double distance = delta.getDistance();
         double speed = trackerWheels.velocity.getDistance();
 
-        double moveTargetSpeed = moveProfile.getTargetSpeed(distance, speed, 0.2);
-        double rotTargetSpeed = rotProfile.getTargetSpeed(delta.angle.rad(), trackerWheels.velocity.angle.rad(), 0.2);
+        double moveTargetSpeed = moveProfile.getTargetSpeed(distance, speed, 2);
+        double rotTargetSpeed = rotProfile.getTargetSpeed(delta.angle.rad(), trackerWheels.velocity.angle.rad(), 2);
 
         Pos robotDelta = delta.rotate(trackerWheels.pos.angle.negative());
 
-        opMode.telemetry.addData("Robot Delta", robotDelta);
+        //opMode.telemetry.addData("Robot Delta", robotDelta);
 
         Pos move = new Pos(moveTargetSpeed, 0, new Angle());
         move = move.rotate(robotDelta.translationAngle());
 
-        opMode.telemetry.addData("X-Vel", trackerWheels.velocity.x);
-        opMode.telemetry.addData("X-Tar", move.x);
-        opMode.telemetry.addData("Y-Vel", trackerWheels.velocity.y);
-        opMode.telemetry.addData("Y-Tar", move.y);
-        opMode.telemetry.addData("R-Vel", trackerWheels.velocity.angle.rad());
-        opMode.telemetry.addData("R-Tar", rotTargetSpeed);
+//        opMode.telemetry.addData("X-Vel", trackerWheels.velocity.x);
+//        opMode.telemetry.addData("X-Tar", move.x);
+//        opMode.telemetry.addData("Y-Vel", trackerWheels.velocity.y);
+//        opMode.telemetry.addData("Y-Tar", move.y);
+//        opMode.telemetry.addData("R-Vel", trackerWheels.velocity.angle.rad());
+//        opMode.telemetry.addData("R-Tar", rotTargetSpeed);
 
         if (setMotors) {
             double x = xPID.update(trackerWheels.velocity.x, move.x, time);

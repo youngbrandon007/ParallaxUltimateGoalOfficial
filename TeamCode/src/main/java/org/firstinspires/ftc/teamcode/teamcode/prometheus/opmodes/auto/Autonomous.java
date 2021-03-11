@@ -31,6 +31,8 @@ public class Autonomous extends LinearOpMode {
 
     ElapsedTime loopTime = new ElapsedTime();
 
+    ElapsedTime totalTime = new ElapsedTime();
+
     MotionProfile moveProfile = new MotionProfile(100, 120);
     MotionProfile rotProfile = new MotionProfile(3, 4);
 
@@ -46,6 +48,7 @@ public class Autonomous extends LinearOpMode {
         Wobble1Arm,
         WaitAfterWobble1,
         DepositWobble1,
+        DriveToPrepWobble2,
         DriveToWobble2,
         CloseGrabber,
         PrepWobble2,
@@ -83,6 +86,8 @@ public class Autonomous extends LinearOpMode {
 
             waitForStart();
 
+            totalTime.reset();
+
             wobbleArm.servoClose();
 
             shooter.shooterLiftDown();
@@ -108,14 +113,13 @@ public class Autonomous extends LinearOpMode {
             wobbleArm.wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             wobbleArm.wobbleArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            while (opModeIsActive()) {
+            while (opModeIsActive() && totalTime.seconds() < 29.5) {
                 if (loopTime.milliseconds() > 50) {
                     double time = loopTime.seconds();
                     telemetry.addData("Time", time);
                     telemetry.addData("Shooter Target", shooter.target);
                     shooter.update(time);
                     loopTime.reset();
-                    shooter.indexerUp();
 
                     //camera.vuforiaLoop();
                     camera.tensorFlowLoop();
@@ -125,6 +129,8 @@ public class Autonomous extends LinearOpMode {
                     switch (action) {
 
                         case DriveForward:
+
+                            shooter.indexerUp();
                             wobbleArm.setPosition(500, 0.6);
                             wobbleArm.servoClose();
 
@@ -141,6 +147,8 @@ public class Autonomous extends LinearOpMode {
                             }
                             break;
                         case Camera:
+
+                            shooter.indexerUp();
                             wobbleArm.setPosition(500, 0.6);
                             shooter.target = shooter.ShooterPowerSpeed;//shooter.setPower(a crap ton);
                             shooter.indexerUp();
@@ -163,7 +171,7 @@ public class Autonomous extends LinearOpMode {
                             break;
                         case DriveToShoot:
                             target = (new Pos(60, 11, new Angle(0)));
-                            dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
                             if (target.atPos(dt.trackerWheels.pos, 1, 0.5)) {
                                 action = program.Shoot1;
                                 timer.reset();
@@ -184,7 +192,7 @@ public class Autonomous extends LinearOpMode {
                             break;
                         case ShootDrive1:
                             target = (new Pos(60, 19, new Angle(0)));
-                            dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
                             if (target.atPos(dt.trackerWheels.pos, 1, 0.5)) {
                                 action = program.Shoot2;
                                 timer.reset();
@@ -203,8 +211,8 @@ public class Autonomous extends LinearOpMode {
                             }
                             break;
                         case ShootDrive2:
-                            target = (new Pos(60, 23, new Angle(0)));
-                            dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
+                            target = (new Pos(60, 26, new Angle(0)));
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
                             if (target.atPos(dt.trackerWheels.pos, 1, 0.5)) {
                                 action = program.Shoot3;
                                 timer.reset();
@@ -214,7 +222,7 @@ public class Autonomous extends LinearOpMode {
                             }
                             break;
                         case Shoot3:
-                            target = (new Pos(60, 23, new Angle(0)));
+                            target = (new Pos(60, 26, new Angle(0)));
                             dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
 
                             shooter.push1RingWithoutPrep();
@@ -226,7 +234,7 @@ public class Autonomous extends LinearOpMode {
                             break;
                         case DriveToWobble1:
                             if (rings == 0) { /// rings
-                                target = (new Pos(80, -20, new Angle().setDegrees(-90)));
+                                target = (new Pos(82, -20, new Angle().setDegrees(-90)));
                             } else if (rings == 1) { // 1 rings
                                 target = (new Pos(84, -4, new Angle(0)));
                             } else { // 4 rings
@@ -252,7 +260,7 @@ public class Autonomous extends LinearOpMode {
 
                         case WaitAfterWobble1:
 
-                            if (timer.seconds() > .1) {
+                            if (timer.seconds() > .3) {
                                 action = program.DepositWobble1;
                                 dt.resetPID();
                             }
@@ -262,12 +270,24 @@ public class Autonomous extends LinearOpMode {
                             if (rings == 0) { /// rings
                                 target = (new Pos(72, 0, new Angle().setDegrees(-90)));
                             } else if (rings == 1) { // 1 rings
-                                target = (new Pos(72, -6, new Angle().setDegrees(180)));
+                                target = (new Pos(72, -12, new Angle().setDegrees(0)));
                             } else { // 4 rings
                                 target = (new Pos(72, 0, new Angle().setDegrees(0)));
                             }
                             dt.updateMovement(target, moveProfile, rotProfile, time, true);
-                            if (target.atPos(dt.trackerWheels.pos, 10, 10)) {
+                            wobbleArm.setPosition(2700, 1);
+                            if (target.atPos(dt.trackerWheels.pos, 15, 15)) {
+                                action = program.DriveToPrepWobble2;
+                                timer.reset();
+                                dt.stop();
+                                dt.resetPID();
+                            }
+                            break;
+                        case DriveToPrepWobble2:
+                            target = (new Pos(31, -15, new Angle().setDegrees((rings == 0) ? -180 : 180)));
+                            dt.updateMovement(target, moveProfile, rotProfile, time, true);
+
+                            if (target.atPos(dt.trackerWheels.pos, 3, 5) && wobbleArm.setPosition(3100, 1)) {
                                 action = program.DriveToWobble2;
                                 timer.reset();
                                 dt.stop();
@@ -275,7 +295,7 @@ public class Autonomous extends LinearOpMode {
                             }
                             break;
                         case DriveToWobble2:
-                            target = (new Pos(31, -20, new Angle().setDegrees((rings == 0) ? -160 : 200)));
+                            target = (new Pos(32, -24, new Angle().setDegrees((rings == 0) ? -160 : 200)));
                             dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
                             if (target.atPos(dt.trackerWheels.pos, 1, 1)) {
                                 action = program.CloseGrabber;
@@ -294,8 +314,8 @@ public class Autonomous extends LinearOpMode {
                         case PrepWobble2:
                             wobbleArm.setPosition(2500, 0.5);
                             target = (new Pos(48, 0, new Angle().setDegrees((rings == 0) ? -90 : 360)));
-                            dt.updateMovement(target, moveProfile, rotProfile, time, true);
-                            if (target.atPos(dt.trackerWheels.pos, 10, 10)) {
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 10, 20)) {
                                 action = program.DepositWobble2;
                                 timer.reset();
                                 dt.stop();
@@ -307,11 +327,11 @@ public class Autonomous extends LinearOpMode {
                             if (rings == 0) { /// rings
                                 target = (new Pos(78, -20, new Angle().setDegrees(-90)));
                             } else if (rings == 1) { // 1 rings
-                                target = (new Pos(78, -4, new Angle().setDegrees(360)));
+                                target = (new Pos(82, -8, new Angle().setDegrees(360)));
                             } else { // 4 rings
-                                target = (new Pos(108, -20, new Angle().setDegrees(315)));
+                                target = (new Pos(112, -20, new Angle().setDegrees(315)));
                             }
-                            dt.updateMovement(target, moveProfile, rotProfile, time, true);
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
                             if (target.atPos(dt.trackerWheels.pos, 2, 2)) {
                                 timer.reset();
                                 dt.stop();
@@ -343,14 +363,22 @@ public class Autonomous extends LinearOpMode {
                                 dt.resetPID();
                             }
                             break;
+                        case Stop:
+                            wobbleArm.setPosition(0, 1.0);
+                            shooter.indexerDown();
+                            break;
                     }
 
                     telemetry.update();
                 }
             }
 
+
+            dt.stop();
+            wobbleArm.wobbleArm.setPower(0);
+            wobbleArm.servoOpen();
             savePosition(dt.trackerWheels.pos);
-            //dt.stop();
+
 
             //camera.stopVuforia();
             //camera.stopTensorFlow();

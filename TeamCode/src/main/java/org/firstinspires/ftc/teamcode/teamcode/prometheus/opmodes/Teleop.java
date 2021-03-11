@@ -28,8 +28,8 @@ public class Teleop extends LinearOpMode {
     boolean collectorOn = false;
 
 
-    MotionProfile moveProfile = new MotionProfile(60, 40);
-    MotionProfile rotProfile = new MotionProfile(2, 2);
+    MotionProfile moveProfile = new MotionProfile(100, 80);
+    MotionProfile rotProfile = new MotionProfile(3, 2);
     int shoot = 1;
 
     enum AutoShoot{
@@ -87,12 +87,32 @@ public class Teleop extends LinearOpMode {
 
             telemetry.addData("Mag", wobbleArm.mag.isPressed());
 
+            Pos t = new Pos(136, -8, new Angle()).sub(dt.trackerWheels.pos);
+
+            Angle angle = t.translationAngle();
+
             if(action == AutoShoot.Not){
                 //dt.setFromAxis(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x * 0.75);
-                dt.fieldCentric(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x * 0.75, new Angle().setDegrees(dt.trackerWheels.pos.angle.getDegrees() - calAngle));
+
+
+
+                if(gamepad1.dpad_left){
+                }else{
+                    dt.fieldCentric(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x * 0.75, new Angle().setDegrees(dt.trackerWheels.pos.angle.getDegrees() - calAngle));
+                    dt.resetPID();
+                }
+
+                telemetry.addData("Angle towards goal", angle);
 
                 if(gamepad1.x){
-                    calAngle = dt.trackerWheels.pos.angle.getDegrees();
+                    dt.resetTrackerWheels();
+                    dt.trackerWheels.pos = new Pos(66,-14, new Angle());
+
+                    calAngle = dt.trackerWheels.pos.angle.getDegrees() + 90;
+
+
+                    dt.trackerWheels.updateAngle();
+                    dt.trackerWheels.robotAngle = new Angle();
                 }
             }
 
@@ -109,11 +129,11 @@ public class Teleop extends LinearOpMode {
                 wobbleArm.wobbleArm.setPower(0);
             }
 
-            if (gamepad1.dpad_right || gamepad2.b) {
+            if (gamepad2.dpad_right) {
                 wobbleArm.servoClose();
             }
 
-            if (gamepad1.dpad_left || gamepad2.x) {
+            if (gamepad2.dpad_left) {
                 wobbleArm.servoOpen();
             }
 
@@ -155,6 +175,7 @@ public class Teleop extends LinearOpMode {
                     break;
                 case Prep:
 
+
                     if(gamepad2.b){
                         shooter.state = Shooter.ShooterState.ActionPrepShooter;
                         shooter.push3.reset();
@@ -169,6 +190,11 @@ public class Teleop extends LinearOpMode {
 
                     break;
                 case PrepShoot:
+                    if(gamepad2.left_trigger > .8){
+                        shooter.target = shooter.ShooterPowerSpeedTele;
+                        shooter.shooterLiftDown();
+                    }
+
                     if(gamepad1.b){
                         shooter.push3.reset();
                         shooter.state = Shooter.ShooterState.ActionShoot;
@@ -244,10 +270,12 @@ public class Teleop extends LinearOpMode {
             }
              */
 
+
             if (collectorOn) {
                     if (gamepad1.right_trigger > 0 || gamepad1.left_trigger > 0) {
                         collector.collector.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
                     }
+
 
                     else {
                         collector.collector.setPower(1);
@@ -327,20 +355,37 @@ public class Teleop extends LinearOpMode {
 
                 timer.reset();
                 action = AutoShoot.Prep;
-                shooter.target = shooter.ShooterPowerSpeed;
+                shooter.target = shooter.ShooterPowerSpeedTele;
+                shooter.shooterLiftDown();
+
             }
 
             if(loopTime.milliseconds() > 50) {
                 dt.updateTrackerWheels(loopTime.seconds());
 
                 if(shooter.target == 0){
-                    shooter.shooter.setPower(0);
+                    if(gamepad1.left_trigger > .5){
+                        shooter.shooter.setPower(-.5);
+                    }else {
+                        shooter.shooter.setPower(-0.5);
+                    }
                 }else{
                     shooter.update(loopTime.seconds());
                 }
 
                 switch (action) {
                     case Not:
+                        if(gamepad1.dpad_left) {
+                            while (angle.getDegrees() - dt.trackerWheels.pos.angle.getDegrees() < -180 || angle.getDegrees() - dt.trackerWheels.pos.angle.getDegrees() > 180){
+                                if (angle.getDegrees() - dt.trackerWheels.pos.angle.getDegrees() < -180) {
+                                    angle.setDegrees(angle.deg() + 360);
+                                }
+                                if (angle.getDegrees() - dt.trackerWheels.pos.angle.getDegrees() > 180) {
+                                    angle.setDegrees(angle.deg() - 360);
+                                }
+                            }
+                            dt.updateMovement(new Pos(0, 0, angle), new MotionProfile(0, 0), new MotionProfile(3, 4), loopTime.seconds(), gamepad1.dpad_left);
+                        }
                         break;
                     case Prep:
 

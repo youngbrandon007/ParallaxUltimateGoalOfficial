@@ -30,7 +30,8 @@ public class Shooter {
     public double previous;
     public double prevError = 0;
     public final double ShooterGoalSpeed = 2400;
-    public final double ShooterPowerSpeed = 2000;
+    public final double ShooterPowerSpeed = 2100;
+    public final double ShooterPowerSpeedTele = 2000;
     public double target = 0;
 
     public ElapsedTime push3 = new ElapsedTime();

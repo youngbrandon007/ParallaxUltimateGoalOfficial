@@ -49,4 +49,8 @@ public class Pos {
         return "(" + x + ", " + y + ") - " + angle.deg();
     }
 
+    public boolean atPos(Pos pos, double distance, double angle){
+        return sub(pos).getDistance() < distance && Math.abs(sub(pos).angle.getDegrees()) < angle;
+    }
+
 }

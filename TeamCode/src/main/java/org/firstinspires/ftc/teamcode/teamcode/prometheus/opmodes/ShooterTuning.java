@@ -33,7 +33,7 @@ public class ShooterTuning extends LinearOpMode {
 
                 waitForStart();
                 while(opModeIsActive()){
-                        if(time.milliseconds() > 100) {
+                        if(time.milliseconds() > 50) {
                                 dt.setFromAxis(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
 
 
@@ -70,7 +70,7 @@ public class ShooterTuning extends LinearOpMode {
                                         shooter.target = 0;
                                 }
                                 if(gamepad1.y){
-                                        shooter.target = 1900;
+                                        shooter.target = 2400;
                                 }
 
 

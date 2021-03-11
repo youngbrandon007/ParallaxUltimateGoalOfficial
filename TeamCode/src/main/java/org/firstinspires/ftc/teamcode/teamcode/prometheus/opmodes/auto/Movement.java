@@ -28,8 +28,8 @@ public class Movement extends LinearOpMode {
 
     ElapsedTime loopTime = new ElapsedTime();
 
-    MotionProfile moveProfile = new MotionProfile(30, 30);
-    MotionProfile rotProfile = new MotionProfile(2, 2);
+    MotionProfile moveProfile = new MotionProfile(100, 120);
+    MotionProfile rotProfile = new MotionProfile(3, 4);
 
     enum Mode{
         X, Y, R
@@ -80,16 +80,16 @@ public class Movement extends LinearOpMode {
                     mode = mode.R;
                 }
 
-                if(gamepad1.dpad_left){
+                if(gamepad1.right_bumper){
                     var = var.P;
                 }
-                if(gamepad1.dpad_right){
+                if(gamepad1.left_bumper){
                     var = var.I;
                 }
-                if(gamepad1.left_trigger > .5){
+                if(gamepad1.right_trigger > .5){
                     var = var.D;
                 }
-                if(gamepad1.right_trigger > .5){
+                if(gamepad1.left_trigger > .5){
                     var = var.F;
                 }
 
@@ -115,10 +115,10 @@ public class Movement extends LinearOpMode {
                         p.p += change * 0.001; // .0001
                         break;
                     case I:
-                        p.i += change * 0.001; //.00001
+                        p.i += change * 0.0001; //.00001
                         break;
                     case D:
-                        p.d += change * 0.000001;
+                        p.d += change * 0.0001;
                         break;
                     case F:
                         p.f += change * 0.0001;
@@ -136,7 +136,9 @@ public class Movement extends LinearOpMode {
 
                 dt.updateTrackerWheels(loopTime.seconds());
 
-                dt.updateMovement(new Pos(0,0,new Angle()), moveProfile, rotProfile, loopTime.seconds(), gamepad1.a);
+
+                dt.updateMovement(new Pos(0, 0, new Angle()), moveProfile, rotProfile, loopTime.seconds(), gamepad1.a);
+
 
                 loopTime.reset();
 

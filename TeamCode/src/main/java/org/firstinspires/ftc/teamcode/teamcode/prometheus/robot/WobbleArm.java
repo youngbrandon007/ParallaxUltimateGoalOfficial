@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.robot;
 
+
+import android.text.method.Touch;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class WobbleArm {
     public Servo wobbleServo;
     public DcMotor wobbleArm;
     private OpMode opMode;
     private boolean tel;
+
+    public TouchSensor mag;
 
     public WobbleArm(OpMode opMode, boolean tel) {
         this.opMode = opMode;
@@ -18,6 +24,8 @@ public class WobbleArm {
         wobbleArm = opMode.hardwareMap.get(DcMotor.class, "wa");
 
         wobbleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        mag = opMode.hardwareMap.get(TouchSensor.class, "mag");
     }
 
     public void servoOpen(){
@@ -25,23 +33,28 @@ public class WobbleArm {
     }
 
     public void servoClose(){
-        wobbleServo.setPosition(0.70);
+        wobbleServo.setPosition(0.71);
     }
 
-    public void setPosition(int targetPosition) {
+    public boolean setPosition(int targetPosition, double speed) {
 
         int motorValue = wobbleArm.getCurrentPosition();
 
+        opMode.telemetry.addData("Wobble Ticks", motorValue);
+
         if (targetPosition - motorValue > 100) {
-            wobbleArm.setPower(1);
+            wobbleArm.setPower(speed);
+            return false;
         }
 
-        else if (motorValue - targetPosition < -100) {
-            wobbleArm.setPower(-1);
+        else if (targetPosition - motorValue < -100) {
+            wobbleArm.setPower(-speed);
+            return false;
         }
 
         else {
             wobbleArm.setPower(0);
+            return true;
         }
 
 

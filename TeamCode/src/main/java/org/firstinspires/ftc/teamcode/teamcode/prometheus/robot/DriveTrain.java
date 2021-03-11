@@ -30,8 +30,8 @@ public class DriveTrain {
 //    public PIDF yPID = new PIDF(0,   0 , 0, 0);
 //    public PIDF rPID = new PIDF(0,  0, 0, 0);
 
-    public PIDF xPID = new PIDF(-0.010000000000000006  ,-1.125E-5,4.999999999999998E-4 , 0);
-     public PIDF yPID = new PIDF(-0.010000000000000006  ,-1.125E-5,4.999999999999998E-4 , 0);
+    public PIDF xPID = new PIDF(-0.012000000000000006  ,-1.225E-5,4.999999999999998E-4 , 0);
+     public PIDF yPID = new PIDF(-0.012000000000000006  ,-1.225E-5,4.999999999999998E-4 , 0);
     public PIDF rPID = new PIDF(-0.0800000000000009 ,  -0.02000000000000012, 0.0039999999999999975 , 0);
 
     // 3/5/21 PID TUNING W/ LAKSHMI :) AND prathik
@@ -210,5 +210,11 @@ public class DriveTrain {
             yPID.resetI();
             rPID.resetI();
         }
+    }
+
+    public void resetPID(){
+        xPID.resetI();
+        yPID.resetI();;
+        rPID.resetI();
     }
 }

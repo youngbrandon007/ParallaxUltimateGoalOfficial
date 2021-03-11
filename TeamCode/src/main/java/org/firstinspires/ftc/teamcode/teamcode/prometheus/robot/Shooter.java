@@ -23,8 +23,8 @@ public class Shooter {
     private OpMode opMode;
 
     public double f = .000380;
-    public double p = 7.100000000000006E-4;
-    public double i = 9.500000000000002E-9; // 9.5000000000000016E-9
+    public double p = 5.100000000000006E-4;
+    public double i = 5.500000000000002E-9; // 9.5000000000000016E-9
     public double d = .0000;
     public double sumError;
     public double previous;
@@ -60,19 +60,20 @@ public class Shooter {
 
     public void update(double time) {
         if(time <= 0){
-            time = 1;
+            time = 0.1;
+            opMode.telemetry.addLine("TIME ERROR");
         }
         double current = -shooter.getCurrentPosition();
         double speed = (current - previous)/time;
         double error = target - speed;
-        if(error > 300) {
+        if(error > 500) {
             shooter.setPower(-1.0);
 
-            opMode.telemetry.addData("PID Value", 1.0);
-        }else if(error < -300){
+            opMode.telemetry.addData("PID Value", -1.0 * 1000);
+        }else if(error < -500){
             shooter.setPower(1.0);
 
-            opMode.telemetry.addData("PID Value", -1.0);
+            opMode.telemetry.addData("PID Value", 1.0 * 1000);
         }else {
             double derv = (error - prevError) / time;
             sumError += error;
@@ -83,7 +84,7 @@ public class Shooter {
             }
             shooter.setPower(-pid);
 
-            opMode.telemetry.addData("PID Value", pid);
+            opMode.telemetry.addData("PID Value", pid * 1000);
         }
 
         opMode.telemetry.addData("Ticks", speed);

@@ -128,6 +128,8 @@ public class Teleop extends LinearOpMode {
                         shooter.state = Shooter.ShooterState.ActionPrep;
                     }
 
+                    shooter.indexerDown();
+
                     if(spam.seconds() < .2){
                         shooter.pusherBack();
                     }else if(spam.seconds() < .4){

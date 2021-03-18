@@ -30,7 +30,7 @@ public class PIDF {
 
         prevError = error;
 
-        return p * error + i * errorSum + d * derv + f * target;
+        return p * error + i * errorSum * Math.abs(target) + d * derv + f * target;
     }
 
     public String toString(){

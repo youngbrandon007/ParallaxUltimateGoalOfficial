@@ -1,6 +1,7 @@
-package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes;
+package org.firstinspires.ftc.teamcode.teamcode.prometheus.OLD;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.WobbleArm;
 
 
 @TeleOp(name = "Teleop2")
+@Disabled
 public class TeleOpSecond extends LinearOpMode {
 
         DriveTrain dt;

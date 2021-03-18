@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.opmodes.auto;
 
+import android.sax.TextElementListener;
+
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,6 +15,8 @@ import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Collector;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.DriveTrain;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.Shooter;
 import org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.WobbleArm;
+
+import static org.firstinspires.ftc.teamcode.teamcode.prometheus.robot.SaveGetFile.savePosition;
 
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
@@ -26,135 +31,360 @@ public class Autonomous extends LinearOpMode {
 
     ElapsedTime loopTime = new ElapsedTime();
 
-    MotionProfile moveProfile = new MotionProfile(30, 30);
-    MotionProfile rotProfile = new MotionProfile(2, 2);
+    ElapsedTime totalTime = new ElapsedTime();
+
+    MotionProfile moveProfile = new MotionProfile(100, 120);
+    MotionProfile rotProfile = new MotionProfile(3, 4);
+
+    MotionProfile slowMoveProfile = new MotionProfile(100, 60);
+    MotionProfile slowRotProfile = new MotionProfile(3, 2);
 
     enum program {
         DriveForward,
         Camera,
         DriveToShoot,
-        Shoot,
+        Shoot1, ShootDrive1, Shoot2, ShootDrive2, Shoot3,
         DriveToWobble1,
+        Wobble1Arm,
+        WaitAfterWobble1,
         DepositWobble1,
+        DriveToPrepWobble2,
         DriveToWobble2,
+        CloseGrabber,
+        PrepWobble2,
         DepositWobble2,
-
+        WaitAfterWobble2,
+        Finish,
+        Stop
     }
 
     program action = program.DriveForward;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-    dt = new DriveTrain(this);
-    shooter = new Shooter(this);
-    collector = new Collector(this);
-    wobbleArm = new WobbleArm(this, true);
-    camera = new Camera(this);
-
-    camera.initCamera();
-    camera.servoBack();
-    dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-    waitForStart();
-
-    camera.startVuforia();
-    camera.startTensorFlow();
-    camera.servoDown();
-
-    loopTime.reset();
-    dt.resetTrackerWheels();
-
-    Pos target;
+        try {
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+            telemetry = dashboard.getTelemetry();
+            telemetry.setAutoClear(false);
 
 
-    while (opModeIsActive()) {
-        if (loopTime.milliseconds() > 50) {
-            camera.vuforiaLoop();
-            camera.tensorFlowLoop();
+            dt = new DriveTrain(this);
+            shooter = new Shooter(this);
+            collector = new Collector(this);
+            wobbleArm = new WobbleArm(this, false);
+            camera = new Camera(this);
 
-            dt.updateTrackerWheels(loopTime.seconds());
-            switch (action) {
+            camera.initCamera();
+            camera.servoBack();
+            dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-                case DriveForward:
-                    target = (new Pos(24, -12, new Angle(0)));
-                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
-                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
-                        action = program.Camera;
-                        dt.stop();
+            shooter.shooterPusherOut();
+            shooter.pusherBack();
+            shooter.shooterLiftDown();
+            shooter.indexerAutoInit();
+
+
+            waitForStart();
+
+            totalTime.reset();
+
+            wobbleArm.servoClose();
+
+            shooter.shooterLiftDown();
+
+            //camera.startVuforia();
+            camera.startTensorFlow();
+            camera.servoDown();
+
+            loopTime.reset();
+
+            dt.resetTrackerWheels();
+            dt.trackerWheels.updateAngle();
+            dt.trackerWheels.robotAngle = new Angle();
+            dt.trackerWheels.pos = new Pos();
+            dt.trackerWheels.oldPos = new Pos();
+
+            Pos target;
+
+            int rings = 0;
+
+            //action = program.Wobble1Arm;
+
+            wobbleArm.wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            wobbleArm.wobbleArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            while (opModeIsActive() && totalTime.seconds() < 29.5) {
+                if (loopTime.milliseconds() > 50) {
+                    double time = loopTime.seconds();
+                    telemetry.addData("Time", time);
+                    telemetry.addData("Shooter Target", shooter.target);
+                    shooter.update(time);
+                    loopTime.reset();
+
+                    //camera.vuforiaLoop();
+                    camera.tensorFlowLoop();
+
+
+                    dt.updateTrackerWheels(time);
+                    switch (action) {
+
+                        case DriveForward:
+
+                            shooter.indexerUp();
+                            wobbleArm.setPosition(500, 0.6);
+                            wobbleArm.servoClose();
+
+                            target = (new Pos(18, -8, new Angle().setDegrees(-20)));
+                            dt.updateMovement(target, moveProfile, rotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 2, 2)) {
+                                timer.reset();
+                                camera.noneCounter = 0;
+                                camera.singleCounter = 0;
+                                camera.quadCounter = 0;
+
+                                action = program.Camera;
+                                dt.stop();
+                            }
+                            break;
+                        case Camera:
+
+                            shooter.indexerUp();
+                            wobbleArm.setPosition(500, 0.6);
+                            shooter.target = shooter.ShooterPowerSpeed;//shooter.setPower(a crap ton);
+                            shooter.indexerUp();
+                            shooter.shooterPusherBack();
+                            if (timer.seconds() > 2) {
+                                camera.stopTensorFlow();
+
+                                action = program.DriveToShoot;
+                                dt.resetPID();
+                                if (camera.noneCounter > camera.singleCounter && camera.noneCounter > camera.quadCounter) {
+                                    rings = 0;
+                                } else if (camera.singleCounter > camera.noneCounter && camera.singleCounter > camera.quadCounter) {
+                                    rings = 1;
+                                } else {
+                                    rings = 4;
+                                }
+                            }
+
+
+                            break;
+                        case DriveToShoot:
+                            target = (new Pos(60, 11, new Angle(0)));
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 1, 0.5)) {
+                                action = program.Shoot1;
+                                timer.reset();
+                                shooter.push3.reset();
+                                dt.resetPID();
+                            }
+                            break;
+                        case Shoot1:
+                            camera.servoBack();
+                            target = (new Pos(60, 11, new Angle(0)));
+                            dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
+                            shooter.push1Ring();
+                            if (timer.seconds() > 1) {
+                                action = program.ShootDrive1;
+                                dt.resetPID();
+                            }
+
+                            break;
+                        case ShootDrive1:
+                            target = (new Pos(60, 19, new Angle(0)));
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 1, 0.5)) {
+                                action = program.Shoot2;
+                                timer.reset();
+                                shooter.push3.reset();
+                                dt.stop();
+                                dt.resetPID();
+                            }
+                            break;
+                        case Shoot2:
+                            target = (new Pos(60, 19, new Angle(0)));
+                            dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
+                            shooter.push1RingWithoutPrep();
+                            if (timer.seconds() > .5) {
+                                action = program.ShootDrive2;
+                                dt.resetPID();
+                            }
+                            break;
+                        case ShootDrive2:
+                            target = (new Pos(60, 26, new Angle(0)));
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 1, 0.5)) {
+                                action = program.Shoot3;
+                                timer.reset();
+                                shooter.push3.reset();
+                                dt.stop();
+                                dt.resetPID();
+                            }
+                            break;
+                        case Shoot3:
+                            target = (new Pos(60, 26, new Angle(0)));
+                            dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
+
+                            shooter.push1RingWithoutPrep();
+                            if (timer.seconds() > .5) {
+                                action = program.DriveToWobble1;
+                                shooter.target = 0;
+                                dt.resetPID();
+                            }
+                            break;
+                        case DriveToWobble1:
+                            if (rings == 0) { /// rings
+                                target = (new Pos(82, -20, new Angle().setDegrees(-90)));
+                            } else if (rings == 1) { // 1 rings
+                                target = (new Pos(84, -4, new Angle(0)));
+                            } else { // 4 rings
+                                target = (new Pos(114, -14, new Angle().setDegrees(-45)));
+                            }
+                            wobbleArm.setPosition(3200, 1);
+                            dt.updateMovement(target, moveProfile, rotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 2, 2)) {
+                                action = program.Wobble1Arm;
+                                timer.reset();
+                                dt.stop();
+                                dt.resetPID();
+                            }
+                            break;
+                        case Wobble1Arm:
+
+                            if (wobbleArm.setPosition(3200, 1)) {
+                                wobbleArm.servoOpen();
+                                action = program.WaitAfterWobble1;
+                                timer.reset();
+                            }
+                            break;
+
+                        case WaitAfterWobble1:
+
+                            if (timer.seconds() > .3) {
+                                action = program.DepositWobble1;
+                                dt.resetPID();
+                            }
+                            break;
+
+                        case DepositWobble1:
+                            if (rings == 0) { /// rings
+                                target = (new Pos(72, 0, new Angle().setDegrees(-90)));
+                            } else if (rings == 1) { // 1 rings
+                                target = (new Pos(72, -12, new Angle().setDegrees(0)));
+                            } else { // 4 rings
+                                target = (new Pos(72, 0, new Angle().setDegrees(0)));
+                            }
+                            dt.updateMovement(target, moveProfile, rotProfile, time, true);
+                            wobbleArm.setPosition(2700, 1);
+                            if (target.atPos(dt.trackerWheels.pos, 15, 15)) {
+                                action = program.DriveToPrepWobble2;
+                                timer.reset();
+                                dt.stop();
+                                dt.resetPID();
+                            }
+                            break;
+                        case DriveToPrepWobble2:
+                            target = (new Pos(31, -15, new Angle().setDegrees((rings == 0) ? -180 : 180)));
+                            dt.updateMovement(target, moveProfile, rotProfile, time, true);
+
+                            if (target.atPos(dt.trackerWheels.pos, 3, 5) && wobbleArm.setPosition(3100, 1)) {
+                                action = program.DriveToWobble2;
+                                timer.reset();
+                                dt.stop();
+                                dt.resetPID();
+                            }
+                            break;
+                        case DriveToWobble2:
+                            target = (new Pos(32, -24, new Angle().setDegrees((rings == 0) ? -160 : 200)));
+                            dt.updateMovement(target, slowMoveProfile, slowRotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 1, 1)) {
+                                action = program.CloseGrabber;
+                                timer.reset();
+                                dt.stop();
+                                dt.resetPID();
+                            }
+                            break;
+                        case CloseGrabber:
+                            wobbleArm.servoClose();
+                            if (timer.seconds() > 1) {
+                                action = program.PrepWobble2;
+                                dt.resetPID();
+                            }
+                            break;
+                        case PrepWobble2:
+                            wobbleArm.setPosition(2500, 0.5);
+                            target = (new Pos(48, 0, new Angle().setDegrees((rings == 0) ? -90 : 360)));
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 10, 20)) {
+                                action = program.DepositWobble2;
+                                timer.reset();
+                                dt.stop();
+                                dt.resetPID();
+                            }
+                            break;
+                        case DepositWobble2:
+                            wobbleArm.setPosition(2500, 0.5);
+                            if (rings == 0) { /// rings
+                                target = (new Pos(78, -20, new Angle().setDegrees(-90)));
+                            } else if (rings == 1) { // 1 rings
+                                target = (new Pos(82, -8, new Angle().setDegrees(360)));
+                            } else { // 4 rings
+                                target = (new Pos(112, -20, new Angle().setDegrees(315)));
+                            }
+                            dt.updateMovement(target, moveProfile, slowRotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 2, 2)) {
+                                timer.reset();
+                                dt.stop();
+                                wobbleArm.servoOpen();
+                                action = program.WaitAfterWobble2;
+                                dt.resetPID();
+                            }
+                            break;
+                        case WaitAfterWobble2:
+
+                            if (timer.seconds() > 0.1) {
+                                action = program.Finish;
+                                dt.resetPID();
+                            }
+
+                            break;
+                        case Finish:
+                            if (rings == 0) { /// rings
+                                target = (new Pos(72, 0, new Angle().setDegrees(-90)));
+                            } else if (rings == 1) { // 1 rings
+                                target = (new Pos(72, -12, new Angle().setDegrees(360)));
+                            } else { // 4 rings
+                                target = (new Pos(72, 24, new Angle().setDegrees(315)));
+                            }
+                            dt.updateMovement(target, moveProfile, rotProfile, time, true);
+                            if (target.atPos(dt.trackerWheels.pos, 2, 2)) {
+                                dt.stop();
+                                action = program.Stop;
+                                dt.resetPID();
+                            }
+                            break;
+                        case Stop:
+                            wobbleArm.setPosition(0, 1.0);
+                            shooter.indexerDown();
+                            break;
                     }
-                    break;
-                case Camera:
-                    if (timer.seconds()>2) {
-                        shooter.shooter.setPower(1);
-                        action = program.DriveToShoot;
-                    }
 
-
-                    break;
-                case DriveToShoot:
-                    target = (new Pos(58, -12, new Angle(0)));
-                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
-                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
-                        action = program.Shoot;
-                        timer.reset();
-                        shooter.push3.reset();
-                        dt.stop();
-                    }
-                    break;
-                case Shoot:
-                    shooter.push3Rings();
-                    if (timer.seconds()>2) {
-                        //action = program.DriveToWobble1;
-                        shooter.shooter.setPower(0);
-                    }
-
-                    break;
-                case DriveToWobble1:
-                    target = (new Pos(0, 0, new Angle()));
-                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
-                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
-                        action = program.DepositWobble1;
-                        timer.reset();
-                        dt.stop();
-                    }
-                    break;
-                case DepositWobble1:
-                    target = (new Pos(0, 0, new Angle()));
-                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
-                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
-                        action = program.DriveToWobble2;
-                        timer.reset();
-                        dt.stop();
-                    }
-                    break;
-                case DriveToWobble2:
-                    target = (new Pos(0, 0, new Angle()));
-                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
-                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
-                        action = program.DepositWobble2;
-                        timer.reset();
-                        dt.stop();
-                    }
-                    break;
-                case DepositWobble2:
-                    target = (new Pos(0, 0, new Angle()));
-                    dt.updateMovement(target, moveProfile, rotProfile, loopTime.seconds(), true);
-                    if (dt.trackerWheels.pos.sub(target).getDistance()<1){
-                        timer.reset();
-                        dt.stop();
-                    }
-                    break;
+                    telemetry.update();
+                }
             }
 
 
-            loopTime.reset();
+            dt.stop();
+            wobbleArm.wobbleArm.setPower(0);
+            wobbleArm.servoOpen();
+            savePosition(dt.trackerWheels.pos);
+
+
+            //camera.stopVuforia();
+            //camera.stopTensorFlow();
+        }catch (Exception e){
+            telemetry.addData("Error", e);
         }
-
-        camera.stopVuforia();
-        camera.stopTensorFlow();
-
-    }
     }
 
 }

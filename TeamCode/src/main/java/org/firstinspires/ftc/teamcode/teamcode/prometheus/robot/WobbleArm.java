@@ -3,10 +3,14 @@ package org.firstinspires.ftc.teamcode.teamcode.prometheus.robot;
 
 import android.text.method.Touch;
 
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class WobbleArm {
     public Servo wobbleServo;
@@ -15,6 +19,8 @@ public class WobbleArm {
     private boolean tel;
 
     public TouchSensor mag;
+    public TouchSensor button;
+    public DistanceSensor distanceSensor;
 
     public WobbleArm(OpMode opMode, boolean tel) {
         this.opMode = opMode;
@@ -26,6 +32,10 @@ public class WobbleArm {
         wobbleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         mag = opMode.hardwareMap.get(TouchSensor.class, "mag");
+
+        button = opMode.hardwareMap.get(TouchSensor.class, "button");
+
+        distanceSensor = opMode.hardwareMap.get(DistanceSensor.class, "distance");
     }
 
     public void servoOpen(){
@@ -59,6 +69,10 @@ public class WobbleArm {
 
 
 
+    }
+
+    public boolean wobbleSensed(){
+        return distanceSensor.getDistance(DistanceUnit.INCH) < 10;
     }
 
 }

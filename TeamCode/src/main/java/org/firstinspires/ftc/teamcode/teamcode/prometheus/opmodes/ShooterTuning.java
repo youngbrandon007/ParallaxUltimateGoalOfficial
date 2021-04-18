@@ -87,8 +87,9 @@ public class ShooterTuning extends LinearOpMode {
                                 telemetry.addData("target Value", shooter.target);
                                 telemetry.addData("Target rpm", shooter.target / 28 * 60);
                                 telemetry.update();
-                        }
 
+                                shooter.updateConstants();
+                        }
 
                 }
         }

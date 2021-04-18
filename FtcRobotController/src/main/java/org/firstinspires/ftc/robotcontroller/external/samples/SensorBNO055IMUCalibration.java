@@ -78,7 +78,7 @@ import java.util.Locale;
  *              any axis you desire, but make sure that the device is lying at least once
  *              perpendicular to the x, y, and z axis.</ol>
  *     <ol>MAG: Move slowly in a figure 8 pattern in the air, until the calibration values reaches 3.</ol>
- *     <ol>SYS: This will usually reach 3 when the other items have also reached 3. If not, continue
+ *     <ol>SYS: This will usually reac  h 3 when the other items have also reached 3. If not, continue
  *              slowly moving the device though various axes until it does."</ol>
  * </li>
  *

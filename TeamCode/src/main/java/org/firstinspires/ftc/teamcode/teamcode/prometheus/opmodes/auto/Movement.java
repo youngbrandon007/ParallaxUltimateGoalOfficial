@@ -70,60 +70,9 @@ public class Movement extends LinearOpMode {
             if(loopTime.milliseconds() > 50) {
                 //Update Tracker Wheels
 
-                if(gamepad1.x){
-                    mode = Mode.X;
-                }
-                if(gamepad1.y){
-                    mode = Mode.Y;
-                }
-                if(gamepad1.b){
-                    mode = mode.R;
-                }
+                dt.updateConstants();
 
-                if(gamepad1.right_bumper){
-                    var = var.P;
-                }
-                if(gamepad1.left_bumper){
-                    var = var.I;
-                }
-                if(gamepad1.right_trigger > .5){
-                    var = var.D;
-                }
-                if(gamepad1.left_trigger > .5){
-                    var = var.F;
-                }
 
-                PIDF p = dt.xPID;
-                switch(mode){
-                    case R:
-                        p = dt.rPID;
-                        break;
-                    case Y:
-                        p = dt.yPID;
-                        break;
-                }
-
-                double change = 0;
-                if(gamepad1.dpad_up){
-                    change = 1;
-                }else if(gamepad1.dpad_down){
-                    change = -1;
-                }
-
-                switch(var){
-                    case P:
-                        p.p += change * 0.001; // .0001
-                        break;
-                    case I:
-                        p.i += change * 0.0001; //.00001
-                        break;
-                    case D:
-                        p.d += change * 0.0001;
-                        break;
-                    case F:
-                        p.f += change * 0.0001;
-                        break;
-                }
 
                 telemetry.addLine(mode.toString());
                 telemetry.addLine(var.toString());

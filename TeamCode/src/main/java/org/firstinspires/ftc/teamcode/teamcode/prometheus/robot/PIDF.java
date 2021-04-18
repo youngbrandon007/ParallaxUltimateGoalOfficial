@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teamcode.prometheus.robot;
 
+import com.acmerobotics.dashboard.config.Config;
+
 public class PIDF {
 
     public double p;

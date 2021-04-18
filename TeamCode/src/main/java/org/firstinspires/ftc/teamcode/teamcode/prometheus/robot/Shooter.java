@@ -30,7 +30,7 @@ public class Shooter {
     public double previous;
     public double prevError = 0;
     public final double ShooterGoalSpeed = 2400;
-    public final double ShooterPowerSpeed = 2100;
+    public final double ShooterPowerSpeed = 2200;
     public final double ShooterPowerSpeedTele = 2000;
     public double target = 0;
 
@@ -57,6 +57,15 @@ public class Shooter {
         shooterPusher = opMode.hardwareMap.get(ServoImplEx.class, "sp");
 
         shooterLiftRight = opMode.hardwareMap.get(ServoImplEx.class, "slr");
+
+        updateConstants();
+    }
+
+    public void updateConstants(){
+        f = RobotConfig.sf;
+        p = RobotConfig.sp;
+        i = RobotConfig.si;
+        d = RobotConfig.sd;
     }
 
     public void update(double time) {
@@ -276,10 +285,10 @@ public class Shooter {
     }
 
     public boolean indexerUpSequence(){
-        if(push3.seconds() < .2){
+        if(push3.seconds() < .3){
             pusherBack();
         }
-        else if(push3.seconds() < .7){
+        else if(push3.seconds() < .8){
             indexerUp();
         }
         else {

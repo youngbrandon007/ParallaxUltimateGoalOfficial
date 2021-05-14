@@ -31,6 +31,7 @@ public class Shooter {
     public double prevError = 0;
     public final double ShooterGoalSpeed = 2400;
     public final double ShooterPowerSpeed = 2200;
+    public final double ShooterAutoFirstSpeed = 2200;
     public final double ShooterPowerSpeedTele = 2000;
     public double target = 0;
 
@@ -64,7 +65,7 @@ public class Shooter {
     public void updateConstants(){
         f = RobotConfig.sf;
         p = RobotConfig.sp;
-        i = RobotConfig.si;
+        i = RobotConfig.si * 10E-9;
         d = RobotConfig.sd;
     }
 
@@ -76,11 +77,11 @@ public class Shooter {
         double current = -shooter.getCurrentPosition();
         double speed = (current - previous)/time;
         double error = target - speed;
-        if(error > 500) {
+        if(error > 10000) {
             shooter.setPower(-1.0);
 
             opMode.telemetry.addData("PID Value", -1.0 * 1000);
-        }else if(error < -500){
+        }else if(error < -10000){
             shooter.setPower(1.0);
 
             opMode.telemetry.addData("PID Value", 1.0 * 1000);
@@ -122,8 +123,8 @@ public class Shooter {
 
     public void indexerDown(){
         indexerOn();
-        leftIndexer.setPosition(0.59);
-        rightIndexer.setPosition(0.38);
+        leftIndexer.setPosition(0.60);
+        rightIndexer.setPosition(0.37);
         indexerUp = false;
     }
 
@@ -147,7 +148,7 @@ public class Shooter {
     }
 
     public void pusherBack(){
-        pusher.setPosition(0.70);
+        pusher.setPosition(0.71);
     }
 
     public void pusherMiddle() {pusher.setPosition(0.67);}
@@ -285,10 +286,10 @@ public class Shooter {
     }
 
     public boolean indexerUpSequence(){
-        if(push3.seconds() < .3){
+        if(push3.seconds() < .5){
             pusherBack();
         }
-        else if(push3.seconds() < .8){
+        else if(push3.seconds() < 1.0){
             indexerUp();
         }
         else {

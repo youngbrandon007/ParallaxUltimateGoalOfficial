@@ -19,7 +19,7 @@ public class RobotConfig {
 
     public static double sf = .000380;
     public static double sp = 5.100000000000006E-4;
-    public static double si = 5.500000000000002E-9; // 9.5000000000000016E-9
+    public static double si = 2.5; // 9.5000000000000016E-9
     public static double sd = .0000;
 
 }
